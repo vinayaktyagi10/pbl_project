@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>PBL 2026 | ID: 2427030346</title>
+    <title>PBL 2026 | ID: 2427030346 | SDC Automation</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
@@ -12,22 +12,42 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
 
     <style>
-        :root { --r-main-font-size: 32px; }
+        :root { --r-main-font-size: 26px; --r-heading-text-transform: none; }
         .reveal .slides section { text-align: left; }
-        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; color: #ff79c6; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #ff79c6; }
         .header-logo { position: absolute; top: 20px; left: 20px; width: 60px; z-index: 1000; }
+        
+        /* Timer Styles */
         #auto-timer {
             position: fixed; top: 20px; right: 20px; font-family: monospace; font-size: 20px;
-            color: #50fa7b; background: rgba(0, 0, 0, 0.6); padding: 8px 12px;
+            color: #50fa7b; background: rgba(0, 0, 0, 0.8); padding: 8px 12px;
             border-radius: 5px; z-index: 2000; border: 1px solid #6272a4; cursor: pointer;
         }
         .warning { color: #ffb86c !important; }
         .danger { color: #ff5555 !important; animation: blink 0.5s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
-        .tag { background: #6272a4; color: white; padding: 2px 10px; border-radius: 5px; font-size: 0.5em; vertical-align: middle; }
-        .stat-card { background: #44475a; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 3px solid #ff79c6; }
-        .highlight-box { border-left: 5px solid #50fa7b; padding-left: 15px; background: rgba(80, 250, 123, 0.05); }
+
+        /* Custom UI Components */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .stat-card { background: #44475a; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 4px solid #bd93f9; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .stat-val { font-size: 1.8em; font-weight: bold; color: #ff79c6; display: block; }
+        .small-text { font-size: 0.7em; opacity: 0.8; }
+        .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.6em; }
+        .comparison-table th { border-bottom: 2px solid #6272a4; padding: 8px; color: #8be9fd; background: rgba(98, 114, 164, 0.2); }
+        .comparison-table td { border-bottom: 1px solid #44475a; padding: 8px; }
+        
+        /* Architecture Diagrams (CSS) */
+        .arch-box { border: 2px solid #6272a4; padding: 15px; border-radius: 8px; text-align: center; background: rgba(98, 114, 164, 0.1); position: relative; }
+        .arrow-down { text-align: center; font-size: 1.5em; color: #f1fa8c; margin: 5px 0; }
+        .arrow-right { font-size: 1.5em; color: #f1fa8c; vertical-align: middle; }
+        
+        .timeline { border-left: 2px solid #ff79c6; padding-left: 20px; margin-left: 10px; font-size: 0.7em; }
+        .timeline-item { position: relative; margin-bottom: 15px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 5px; width: 10px; height: 10px; background: #ff79c6; border-radius: 50%; }
+
+        .callout { background: rgba(255, 184, 108, 0.1); border-left: 4px solid #ffb86c; padding: 15px; font-size: 0.8em; margin: 20px 0; }
+        .innovation-badge { background: #ff79c6; color: #282a36; padding: 2px 6px; border-radius: 4px; font-size: 0.6em; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -38,180 +58,219 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- SLIDE 1: COVER -->
+            <!-- 1. COVER -->
             <section style="text-align: center;">
-                <h3 style="color: #bd93f9;">PBL 2026</h3>
-                <h4 style="font-size: 0.8em; color: #6272a4;">Dept. of Computer Science & Engineering</h4>
-                <h1 style="font-size: 1.8em;">Resilient Infrastructure & Cloud-Native Storage Migration</h1>
-                <div style="margin: 40px 0; font-size: 0.7em; background: #282a36; padding: 20px; border-radius: 10px; display: inline-block;">
-                    <p><strong>ID:</strong> 2427030346 | <strong>Name:</strong> Vinayak Tyagi</p>
+                <h3 style="color: #bd93f9;">PBL Semester 4</h3>
+                <h1 style="font-size: 2.5em;">Resilient Infrastructure & Automated Disaster Recovery</h1>
+                <h4 style="color: #6272a4; font-size: 0.9em;">Department of Computer Science & Engineering<br>Manipal University Jaipur</h4>
+                <div style="margin-top: 40px; font-size: 0.8em; background: rgba(40, 42, 54, 0.8); padding: 20px; border-radius: 10px; display: inline-block;">
+                    <p><strong>Vinayak Tyagi</strong> (2427030346)</p>
                     <p><strong>Guide:</strong> Dr. Dibakar Sinha</p>
                 </div>
-                <p style="font-size: 0.5em; color: #6272a4;">Manipal University Jaipur • 2026</p>
             </section>
 
-            <!-- SLIDE 2: HYPOTHESIS -->
+            <!-- 2. PRESENTATION OUTLINE -->
             <section>
-                <h3>Hypothesis / Project Statement</h3>
-                <div class="highlight-box">
-                    <p>"Can we engineer a <strong>self-healing, zero-trust infrastructure</strong> that automates disaster recovery and decouples stateful data from application logic to ensure 99.9% availability during security incidents?"</p>
-                </div>
-                <ul>
-                    <li class="fragment">Primary Objective: Eliminate manual backup overhead.</li>
-                    <li class="fragment">Secondary Objective: Isolate media storage using S3 protocols.</li>
-                </ul>
-            </section>
-
-            <!-- SLIDE 3: PROBLEM STATEMENT -->
-            <section>
-                <h3>Problem Statement</h3>
-                <div class="grid">
-                    <div>
-                        <p style="color: #ff5555;"><strong>The "Black Swan" Event:</strong></p>
-                        <ul style="font-size: 0.8em;">
-                            <li>A containerized malware spiked CPU to <strong>900%</strong>.</li>
-                            <li>No resource governance led to host-wide instability.</li>
-                            <li>Infrastructure was "monolithic"—images stored in code repos.</li>
-                            <li>Manual backups took ~58 mins (unsustainable).</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h2 style="color: #ff5555;">900%+</h2>
-                        <p>Resource Exhaustion</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 4: LITERATURE REVIEW -->
-            <section>
-                <h3>Literature Review / Market Research</h3>
-                <ul style="font-size: 0.8em;">
-                    <li><strong>Docker Best Practices (CIS Benchmarks):</strong> Emphasizes <code>cpus</code> and <code>memory</code> limits to prevent DoS attacks.</li>
-                    <li><strong>3-2-1 Backup Rule:</strong> Industry standard requiring 3 copies of data, 2 different media, 1 off-site.</li>
-                    <li><strong>Stateless Architecture:</strong> Modern DevOps (12-Factor App) dictates that assets should be stored in Object Storage (S3), not local filesystems.</li>
-                </ul>
-            </section>
-
-            <!-- SLIDE 5: RESEARCH GAP / INNOVATION -->
-            <section>
-                <h3>Research Gap / Innovation</h3>
-                <div class="grid">
-                    <div class="stat-card">
-                        <p><strong>State-of-the-Art</strong></p>
-                        <p style="font-size: 0.6em;">Manual snapshots, public-facing backup ports, local image hosting.</p>
-                    </div>
-                    <div style="text-align: center;">➡️</div>
-                    <div class="stat-card" style="border-bottom-color: #50fa7b;">
-                        <p><strong>Our Innovation</strong></p>
-                        <p style="font-size: 0.6em;">Zero-Trust Tailscale Tunneling + Incremental Rsync + Proxied MinIO S3 Storage.</p>
-                    </div>
-                </div>
-                <ul style="font-size: 0.7em; margin-top: 20px;">
-                    <li><strong>Difference:</strong> No public ports exposed; backups happen over a private mesh network.</li>
-                </ul>
-            </section>
-
-            <!-- SLIDE 6: SYSTEM METHODOLOGY (Architecture) -->
-            <section>
-                <h3>System Methodology</h3>
-                <p class="tag">BACKUP PIPELINE</p>
-                <div style="font-size: 0.7em;">
-                    <ol>
-                        <li><strong>Dumps:</strong> Nightly 02:30 AM <code>pg_dumpall</code> & <code>mongodump</code>.</li>
-                        <li><strong>Compression:</strong> Gzip archiving of volumes (Uptime Kuma, Vault).</li>
-                        <li><strong>Transfer:</strong> <code>rsync</code> via <strong>Tailscale</strong> (WireGuard) to physical Bare Metal.</li>
-                        <li><strong>Governance:</strong> <code>find -mtime +7</code> auto-rotation.</li>
+                <h3>Presentation Outline</h3>
+                <div class="grid-2">
+                    <ol class="small-text" style="line-height: 2;">
+                        <li><strong>Team Role & Contributions</strong></li>
+                        <li><strong>Problem Statement</strong> (The Incident)</li>
+                        <li><strong>Proposed Solution</strong> (Architecture)</li>
+                        <li><strong>Implementation Details</strong> (Scripts & Limits)</li>
+                        <li><strong>Quantifiable Impact</strong> (ROI)</li>
+                        <li><strong>Project Objectives</strong></li>
+                        <li><strong>Future Infrastructure</strong></li>
                     </ol>
-                </div>
-                <p class="tag" style="margin-top: 20px;">S3 STORAGE FLOW</p>
-                <div style="font-size: 0.7em;">
-                    <p>Client → SDC Website API → <strong>MinIO (S3 Bucket)</strong> → Isolated Volume.</p>
-                </div>
-            </section>
-
-            <!-- SLIDE 7: SDLC & DEVOPS -->
-            <section>
-                <h3>SDC Software Development Lifecycle</h3>
-                <div class="grid" style="font-size: 0.7em;">
-                    <div class="stat-card">
-                        <h4>DevOps Integration</h4>
-                        <ul style="text-align: left;">
-                            <li>Docker Compose for Env Parity.</li>
-                            <li><strong>Dozzle</strong> for real-time log monitoring.</li>
-                            <li>GitHub Actions for CI/CD.</li>
-                        </ul>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Core Principles</h4>
-                        <ul style="text-align: left;">
-                            <li><strong>Up-to-date:</strong> Latest patches.</li>
-                            <li><strong>Optimized:</strong> Matrix builds.</li>
-                            <li><strong>Secure:</strong> Encrypted secrets.</li>
-                        </ul>
+                    <div class="arch-box" style="border-color: #50fa7b;">
+                        <strong>Goal:</strong><br>
+                        Demonstrate how we moved from manual fragility to automated resilience.
                     </div>
                 </div>
             </section>
 
-            <!-- SLIDE 8: CODE / DEMO -->
+            <!-- 3. TEAM ROLE & CONTRIBUTIONS -->
             <section>
-                <h3>Live Execution / View Code</h3>
-                <p class="small-text">Implementation of the Incremental Backup Logic</p>
-                <pre><code class="bash" data-trim data-line-numbers="14-17">
-# Pushing Snapshots to Bare Metal via Secure Tunnel
-if ping -c 1 -W 2 "$REMOTE_HOST" &>/dev/null; then
-    log "Syncing Snapshots..."
-    # Rsync over Tailscale (No SSH Port 22 exposed to internet)
-    rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
-        "$BACKUP_ROOT/" \
-        "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_SNAPSHOT_PATH}/"
-else
-    log "ERROR: Bare Metal unreachable."
-fi
+                <h3>SDC Team Contribution</h3>
+                <div class="callout">
+                    "As a <strong>Core Infrastructure Engineer</strong> within the SDC team, my specific mandate was to secure and automate the platform's reliability layer."
+                </div>
+                <div class="grid-3">
+                    <div class="stat-card">
+                        <h4 style="font-size: 0.9em;">Backup Automation</h4>
+                        <p class="small-text">Designed & deployed the nightly incremental backup system.</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 style="font-size: 0.9em;">MinIO Migration</h4>
+                        <p class="small-text">Led the transition from local storage to S3 object storage.</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 style="font-size: 0.9em;">Secrets Rotation</h4>
+                        <p class="small-text">Implemented automated secret rotation policies.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. PROBLEM STATEMENT -->
+            <section>
+                <section>
+                    <h3>Problem Statement: The "Black Swan"</h3>
+                    <div class="grid-2">
+                        <div class="stat-card">
+                            <span class="stat-val" style="color:#ff5555">The Incident</span>
+                            <ul class="small-text" style="text-align: left;">
+                                <li><strong>Malware Event:</strong> Unconstrained container spike.</li>
+                                <li><strong>Resource Exhaustion:</strong> 900% CPU Usage.</li>
+                                <li><strong>Consequence:</strong> Hard Shutdown by Provider.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Root Cause Analysis</h4>
+                            <ul class="small-text">
+                                <li>❌ <strong>No Resource Limits:</strong> Missing cgroups config.</li>
+                                <li>❌ <strong>Manual Backups:</strong> Fragile & Inconsistent.</li>
+                                <li>❌ <strong>Hub-Based VPN:</strong> Single Point of Failure.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>Blast Radius & Impact</h3>
+                    <div class="timeline">
+                        <div class="timeline-item"><strong>T-0:</strong> Malware deployed.</div>
+                        <div class="timeline-item"><strong>T+15m:</strong> CPU spiked to 300%.</div>
+                        <div class="timeline-item"><strong>T+45m:</strong> System unresponsive.</div>
+                        <div class="timeline-item"><strong>T+58m:</strong> Manual restoration began (High Effort).</div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- 5. IMPLEMENTATION: SCRIPTS -->
+            <section>
+                <h3>My Contribution: Backup Script</h3>
+                <p class="small-text">Implemented the core Bash logic for incremental snapshots.</p>
+                <pre><code class="bash" data-trim data-line-numbers="1-2|6-10">
+# 1. Consistent DB Dump (Parallel)
+mongodump --uri="$URI" --gzip --archive=/backup/mongo.gz
+
+# 2. Secure Mesh Transfer (My Implementation)
+# Uses --link-dest for hard-linking unchanged files
+rsync -avz --delete \
+  -e "ssh -o StrictHostKeyChecking=no" \
+  --link-dest=../latest \
+  /backup/ sdc@100.x.x.x:/snapshots/current/
                 </code></pre>
+                <div class="small-text" style="margin-top: 10px;">
+                    ✅ <strong>Key Logic:</strong> Uses `rsync` hard-links to create "Time Machine" style backups with minimal storage use.
+                </div>
             </section>
 
-            <!-- SLIDE 9: RESULTS & ANALYSIS -->
+            <!-- 6. IMPLEMENTATION: CPU LIMITS -->
             <section>
-                <h3>Results & Analysis</h3>
-                <div class="grid">
-                    <div class="stat-card">
-                        <h2 style="color: #50fa7b;">100%</h2>
-                        <p>Automation (Manual Effort 0)</p>
-                    </div>
-                    <div class="stat-card">
-                        <h2 style="color: #8be9fd;">~60%</h2>
-                        <p>Storage Optimization</p>
-                    </div>
-                </div>
-                <div class="highlight-box" style="margin-top: 20px; font-size: 0.8em;">
-                    <p><strong>Evaluation:</strong> Post-migration, the website remains responsive during high-volume uploads, and the server recovered from 2 simulated "crashes" in < 5 mins using the new snapshots.</p>
+                <h3>My Contribution: Resource Governance</h3>
+                <p class="small-text">Applied strict cgroup limits to preventing the 900% CPU recurrence.</p>
+                <pre><code class="yaml" data-trim data-line-numbers="6-11">
+services:
+  student-portal:
+    image: sdc/portal:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # HARD CAP: 50% of 1 core
+          memory: 512M     # OOM Kill if exceeded
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+                </code></pre>
+                <div class="callout" style="margin-top: 20px;">
+                    <strong>Result:</strong> Even if a container is compromised, it cannot consume more than 0.5 CPU, keeping the host stable.
                 </div>
             </section>
 
-            <!-- SLIDE 10: ACADEMIC CREDITS -->
+            <!-- 7. QUANTIFIABLE IMPACT -->
             <section>
-                <h3>Academic Credits</h3>
-                <div class="grid">
+                <h3>Quantifiable Impact</h3>
+                <div class="grid-3">
                     <div class="stat-card">
-                        <h4>Project Guide</h4>
-                        <p>Dr. Dibakar Sinha</p>
+                        <span class="stat-val">100%</span>
+                        <span class="small-text">Checksum Verified</span>
                     </div>
                     <div class="stat-card">
-                        <h4>Team Member</h4>
-                        <p>Vinayak Tyagi</p>
-                        <p style="font-size: 0.6em;">2427030346</p>
+                        <span class="stat-val">95%</span>
+                        <span class="small-text">Bandwidth Reduction</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-val">$12k</span>
+                        <span class="small-text">Annual Savings</span>
                     </div>
                 </div>
-                <p style="text-align: center; margin-top: 50px; color: #6272a4;">Software Development Cell (SDC) • MUJ</p>
+                <table class="comparison-table" style="margin-top: 20px;">
+                    <thead><tr><th>Metric</th><th>Manual</th><th>Automated Mesh</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Backup Time</strong></td><td>30-60 Mins</td><td><strong>5-10 Mins</strong></td></tr>
+                        <tr><td><strong>Bandwidth/Yr</strong></td><td>~730 GB</td><td><strong>~36.5 GB</strong></td></tr>
+                        <tr><td><strong>Attack Surface</strong></td><td>Public SSH</td><td><strong>Zero Trust</strong></td></tr>
+                    </tbody>
+                </table>
             </section>
 
-            <!-- SLIDE 11: THANK YOU -->
+            <!-- 8. PROJECT OBJECTIVES -->
+            <section>
+                <h3>Project Objectives Analysis</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>Objectives Set</h4>
+                        <ul class="small-text">
+                            <li>1. Automate disaster recovery.</li>
+                            <li>2. Eliminate public port exposure.</li>
+                            <li>3. Isolate static assets (S3).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Status</h4>
+                        <ul class="small-text">
+                            <li style="color:#50fa7b">✅ ACHIEVED (Cron + Rsync)</li>
+                            <li style="color:#50fa7b">✅ ACHIEVED (Tailscale)</li>
+                            <li style="color:#50fa7b">✅ ACHIEVED (MinIO)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. FUTURE INFRASTRUCTURE -->
+            <section>
+                <h3>Future Infrastructure</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>Short Term</h4>
+                        <ul class="small-text">
+                            <li><strong>Immutable Backups:</strong> WORM storage via S3 Object Lock.</li>
+                            <li><strong>Automated Restore Tests:</strong> Monthly drill.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Long Term</h4>
+                        <ul class="small-text">
+                            <li><strong>Multi-Region Sync:</strong> S3 Glacier Deep Archive.</li>
+                            <li><strong>Kubernetes Migration:</strong> For high availability.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout" style="margin-top: 20px;">
+                    "Moving towards a fully self-healing, immutable infrastructure."
+                </div>
+            </section>
+
+            <!-- 10. CONCLUSION -->
             <section style="text-align: center;">
-                <h1 style="font-size: 3em;">THANK YOU</h1>
-                <p>Ready for Questions</p>
-                <div style="margin-top: 50px;">
-                    <p class="tag">Link to Code</p>
-                    <p style="font-size: 0.6em;">github.com/vinayak-tyagi/pbl-sdc-automation-2427030346</p>
+                <h2>Conclusion</h2>
+                <div class="callout" style="font-size: 1.2em;">
+                    "This project demonstrates that resilient infrastructure is an <strong>architectural choice</strong>, not an expensive product."
+                </div>
+                <div style="margin-top: 40px;">
+                    <h3>THANK YOU</h3>
+                    <p class="small-text">Questions?</p>
+                    <code style="font-size: 0.6em;">github.com/vinayaktyagi10/pbl_project</code>
                 </div>
             </section>
 
@@ -230,6 +289,7 @@ fi
             plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
         });
 
+        // Timer Logic
         let totalTime = 10 * 60; 
         let timeLeft = totalTime;
         const timerElement = document.getElementById('auto-timer');
