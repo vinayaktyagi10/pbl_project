@@ -40,19 +40,23 @@ We engineered a **Self-Healing Infrastructure** capable of surviving catastrophi
 <div class="grid grid-cols-2 gap-4 mt-10">
 
 <div v-click>
-<h3 class="text-red-400">The "Before" State</h3>
+
+### The "Before" State {class="text-red-400"}
 
 - **Fragile:** Manual backups (human error prone).
 - **Insecure:** Publicly exposed SSH ports.
-- **Unstable:** No resource limits (one bug crashes everything).
+- **Unstable:** No resource limits.
+
 </div>
 
 <div v-click>
-<h3 class="text-green-400">The "After" State</h3>
+
+### The "After" State {class="text-green-400"}
 
 - **Resilient:** Automated incremental snapshots.
-- **Secure:** Zero Trust Mesh Network (Tailscale).
-- **Governed:** Kernel-level CPU/RAM Constraints (cgroups).
+- **Secure:** Zero Trust Mesh Network.
+- **Governed:** Kernel-level CPU/RAM Constraints.
+
 </div>
 
 </div>
@@ -66,18 +70,21 @@ As a **Core Infrastructure Engineer**, I was responsible for the reliability and
 <div class="grid grid-cols-3 gap-4 mt-10">
 
 <div v-click class="bg-blue-900/20 p-4 rounded border-b-4 border-blue-500">
-<h4>Automation</h4>
-<p class="text-sm opacity-80">Designed the nightly cron-based backup logic and rotation policy.</p>
+
+#### Automation
+Designed the nightly cron-based backup logic and rotation policy.
 </div>
 
 <div v-click class="bg-purple-900/20 p-4 rounded border-b-4 border-purple-500">
-<h4>Storage Migration</h4>
-<p class="text-sm opacity-80">Orchestrated the transition from local disk to S3-compatible MinIO.</p>
+
+#### Storage Migration
+Orchestrated the transition from local disk to S3-compatible MinIO.
 </div>
 
 <div v-click class="bg-green-900/20 p-4 rounded border-b-4 border-green-500">
-<h4>Security</h4>
-<p class="text-sm opacity-80">Configured Tailscale ACLs to enforce Zero Trust access control.</p>
+
+#### Security
+Configured Tailscale ACLs to enforce Zero Trust access control.
 </div>
 
 </div>
@@ -144,37 +151,39 @@ graph LR
 
 ---
 
-# 1. Zero Trust Networking
+# Zero Trust Networking
+
+We eliminated public attack surfaces using **Tailscale (WireGuard protocol)**.
 
 <div class="grid grid-cols-2 gap-4">
 
 <div>
-We eliminated public attack surfaces by implementing a <strong>Mesh VPN Overlay</strong> using Tailscale (WireGuard protocol).
 
-- **No Public Ports:** SSH port 22 is closed to the internet.
-- **Identity Based:** Access is granted via SSO identity, not IP address.
-- **NAT Traversal:** Works behind strict college firewalls without port forwarding.
+- **No Public Ports:** SSH port 22 is closed.
+- **Identity Based:** Access via SSO.
+- **NAT Traversal:** Works behind firewalls.
+
 </div>
 
 <div class="bg-black/30 p-4 rounded text-sm font-mono">
-# Firewall Rules (UFW)
 
+# Firewall Rules (UFW)
 Status: active
 
-To                         Action      From
---                         ------      ----
-22/tcp                     DENY IN     Anywhere
-443/tcp                    ALLOW IN    Anywhere
-41641/udp                  ALLOW IN    Anywhere (Tailscale)
+To           Action      From
+--           ------      ----
+22/tcp       DENY IN     Anywhere
+443/tcp      ALLOW IN    Anywhere
+41641/udp    ALLOW IN    Anywhere
 
-# Result: Server is invisible to scanners (Shodan, Nmap).
+# Server is invisible to scanners.
 </div>
 
 </div>
 
 ---
 
-# 2. Automated Incremental Backups
+# Automated Incremental Backups
 
 I engineered a bash-based snapshot system using `rsync` hard-links.
 
@@ -182,8 +191,7 @@ I engineered a bash-based snapshot system using `rsync` hard-links.
 
 ```bash {all|2|6-9}
 # The Core Logic
-# --link-dest creates hard links to the PREVIOUS backup
-# This acts like Apple "Time Machine"
+# --link-dest creates hard links to PREVIOUS
 # 0% Storage use for unchanged files.
 
 rsync -avz --delete 
@@ -194,62 +202,77 @@ rsync -avz --delete
 
 <div>
 
-### Why this matters?
+### Projected Efficiency
 
-| Metric | Full Copy | Incremental (My Script) |
-| --- | --- | --- |
-| **Storage/Day** | 50 GB | **~200 MB** (Changes only) |
-| **Time/Run** | 45 Mins | **2 Mins** |
-| **Recovery** | Slow | **Instant** |
+<StorageSavings />
 
 </div>
 </div>
 
 ---
+transition: fade-out
+---
 
-# 3. Governance: Kernel-Level Limits
+# Governance: Resource Limits
+### The Vulnerable Config (Legacy)
 
-To prevent the "900% CPU" crash, we implemented **Control Groups (cgroups)** via Docker Compose.
+```yaml
+services:
+  student-portal:
+    image: sdc/portal:latest
+    # No resource constraints
+    # One bug can take down the whole host
+```
 
-```yaml {4-11}
+---
+transition: fade-in
+---
+
+# Governance: Resource Limits
+### The Resilient Config (My Implementation)
+
+```yaml {6-11}
 services:
   student-portal:
     image: sdc/portal:latest
     deploy:
       resources:
         limits:
-          # HARD CAP: Container is THROTTLED if it exceeds this.
-          cpus: '0.50'     # 50% of one core
-          memory: 512M     # Process Killed (OOM) if exceeded
+          cpus: '0.50'     # HARD CAP: 50% of 1 core
+          memory: 512M     # OOM Kill if exceeded
         reservations:
-          cpus: '0.10'     # Guaranteed resources
+          cpus: '0.10'
           memory: 128M
 ```
 
 <div class="mt-4 bg-yellow-900/30 p-4 rounded text-sm border-l-4 border-yellow-500">
-<strong>Technical Insight:</strong> Even if a student uploads a <code>while(true) fork()</code> bomb, the Linux Scheduler will throttle that specific container process to 50%, leaving the host OS responsive.
+<strong>Kernel Level:</strong> Uses Linux <code>cgroups</code> to throttle malicious or buggy processes without crashing the OS.
 </div>
 
 ---
 
-# 4. Storage Modernization (MinIO)
+# Storage Modernization (MinIO)
 
-We migrated static assets (PDFs, Images) from Block Storage (Local Disk) to **Object Storage (S3 Compatible)**.
+We migrated static assets from Block Storage to **Object Storage**.
 
 <div class="grid grid-cols-2 gap-6 mt-6">
 
 <div>
-**The Problem with Local Disk:**
-- Hard to scale (disk fills up).
+
+#### The Problem
+- Hard to scale.
 - Single Point of Failure.
-- Complex to backup active files.
+- Inefficient for active files.
+
 </div>
 
 <div>
-**The MinIO Solution:**
-- **Immutable:** Objects can be locked (WORM - Write Once Read Many) preventing Ransomware.
-- **Cloud Native:** Compatible with AWS S3 APIs.
-- **Decoupled:** The app doesn't care which server holds the data.
+
+#### The MinIO Solution
+- **Immutable:** WORM locking.
+- **S3 API:** Cloud Native standard.
+- **Decoupled:** High availability.
+
 </div>
 
 </div>
@@ -262,24 +285,20 @@ Quantifying the impact of these engineering changes.
 
 | Metric | Definition | Before | After | Improvement |
 | :--- | :--- | :--- | :--- | :--- |
-| **RPO** | Recovery Point Objective (Max Data Loss) | 24 Hours | **1 Hour** | **24x Better** |
-| **RTO** | Recovery Time Objective (Time to Restore) | ~4 Hours | **< 5 Mins** | **48x Faster** |
-| **Uptime** | Availability during heavy load | 92% | **99.9%** | **High Availability** |
+| **RPO** | Recovery Point Objective | 24 Hours | **1 Hour** | **24x Better** |
+| **RTO** | Recovery Time Objective | ~4 Hours | **< 5 Mins** | **48x Faster** |
+| **Uptime** | Availability | 92% | **99.9%** | **High Availability** |
 
 ---
 
 # Future Roadmap
 
-<v-clicks>
-
 - **Phase 1: Immutable Backups**
-  - Enable Object Locking (Governance Mode) on MinIO to prevent deletion even by root.
+  - Enable Object Locking (Governance Mode) on MinIO.
 - **Phase 2: Chaos Engineering**
-  - Implement "Chaos Monkey" to randomly kill containers and verify auto-restart policies.
-- **Phase 3: Multi-Region**
-  - Replicate critical S3 buckets to a secondary off-site location (Cold Storage).
-
-</v-clicks>
+  - Implement "Chaos Monkey" for auto-restart verification.
+- **Phase 3: Multi-Region Sync**
+  - Off-site replication for disaster recovery.
 
 ---
 layout: center
@@ -295,6 +314,6 @@ It is an **architectural choice**.
 Thank You
 </div>
 
-<div class="mt-4 text-sm font-mono">
+<div class="mt-4 text-sm font-mono text-pink-500">
 github.com/vinayaktyagi10/pbl_project
 </div>
