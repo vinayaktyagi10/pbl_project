@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>PBL 2026 | ID: 2427030346</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/dracula.css" id="theme">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
+
+    <style>
+        :root { --r-main-font-size: 32px; }
+        .reveal .slides section { text-align: left; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; color: #ff79c6; }
+        .header-logo { position: absolute; top: 20px; left: 20px; width: 60px; z-index: 1000; }
+        #auto-timer {
+            position: fixed; top: 20px; right: 20px; font-family: monospace; font-size: 20px;
+            color: #50fa7b; background: rgba(0, 0, 0, 0.6); padding: 8px 12px;
+            border-radius: 5px; z-index: 2000; border: 1px solid #6272a4; cursor: pointer;
+        }
+        .warning { color: #ffb86c !important; }
+        .danger { color: #ff5555 !important; animation: blink 0.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+        .tag { background: #6272a4; color: white; padding: 2px 10px; border-radius: 5px; font-size: 0.5em; vertical-align: middle; }
+        .stat-card { background: #44475a; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 3px solid #ff79c6; }
+        .highlight-box { border-left: 5px solid #50fa7b; padding-left: 15px; background: rgba(80, 250, 123, 0.05); }
+    </style>
+</head>
+<body>
+
+    <img src="sdc_logo.jpg" class="header-logo">
+    <div id="auto-timer" title="Click to Reset">10:00</div>
+
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: COVER -->
+            <section style="text-align: center;">
+                <h3 style="color: #bd93f9;">PBL 2026</h3>
+                <h4 style="font-size: 0.8em; color: #6272a4;">Dept. of Computer Science & Engineering</h4>
+                <h1 style="font-size: 1.8em;">Resilient Infrastructure & Cloud-Native Storage Migration</h1>
+                <div style="margin: 40px 0; font-size: 0.7em; background: #282a36; padding: 20px; border-radius: 10px; display: inline-block;">
+                    <p><strong>ID:</strong> 2427030346 | <strong>Name:</strong> Vinayak Tyagi</p>
+                    <p><strong>Guide:</strong> Dr. Dibakar Sinha</p>
+                </div>
+                <p style="font-size: 0.5em; color: #6272a4;">Manipal University Jaipur • 2026</p>
+            </section>
+
+            <!-- SLIDE 2: HYPOTHESIS -->
+            <section>
+                <h3>Hypothesis / Project Statement</h3>
+                <div class="highlight-box">
+                    <p>"Can we engineer a <strong>self-healing, zero-trust infrastructure</strong> that automates disaster recovery and decouples stateful data from application logic to ensure 99.9% availability during security incidents?"</p>
+                </div>
+                <ul>
+                    <li class="fragment">Primary Objective: Eliminate manual backup overhead.</li>
+                    <li class="fragment">Secondary Objective: Isolate media storage using S3 protocols.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 3: PROBLEM STATEMENT -->
+            <section>
+                <h3>Problem Statement</h3>
+                <div class="grid">
+                    <div>
+                        <p style="color: #ff5555;"><strong>The "Black Swan" Event:</strong></p>
+                        <ul style="font-size: 0.8em;">
+                            <li>A containerized malware spiked CPU to <strong>900%</strong>.</li>
+                            <li>No resource governance led to host-wide instability.</li>
+                            <li>Infrastructure was "monolithic"—images stored in code repos.</li>
+                            <li>Manual backups took ~58 mins (unsustainable).</li>
+                        </ul>
+                    </div>
+                    <div class="stat-card">
+                        <h2 style="color: #ff5555;">900%+</h2>
+                        <p>Resource Exhaustion</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: LITERATURE REVIEW -->
+            <section>
+                <h3>Literature Review / Market Research</h3>
+                <ul style="font-size: 0.8em;">
+                    <li><strong>Docker Best Practices (CIS Benchmarks):</strong> Emphasizes <code>cpus</code> and <code>memory</code> limits to prevent DoS attacks.</li>
+                    <li><strong>3-2-1 Backup Rule:</strong> Industry standard requiring 3 copies of data, 2 different media, 1 off-site.</li>
+                    <li><strong>Stateless Architecture:</strong> Modern DevOps (12-Factor App) dictates that assets should be stored in Object Storage (S3), not local filesystems.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 5: RESEARCH GAP / INNOVATION -->
+            <section>
+                <h3>Research Gap / Innovation</h3>
+                <div class="grid">
+                    <div class="stat-card">
+                        <p><strong>State-of-the-Art</strong></p>
+                        <p style="font-size: 0.6em;">Manual snapshots, public-facing backup ports, local image hosting.</p>
+                    </div>
+                    <div style="text-align: center;">➡️</div>
+                    <div class="stat-card" style="border-bottom-color: #50fa7b;">
+                        <p><strong>Our Innovation</strong></p>
+                        <p style="font-size: 0.6em;">Zero-Trust Tailscale Tunneling + Incremental Rsync + Proxied MinIO S3 Storage.</p>
+                    </div>
+                </div>
+                <ul style="font-size: 0.7em; margin-top: 20px;">
+                    <li><strong>Difference:</strong> No public ports exposed; backups happen over a private mesh network.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 6: SYSTEM METHODOLOGY (Architecture) -->
+            <section>
+                <h3>System Methodology</h3>
+                <p class="tag">BACKUP PIPELINE</p>
+                <div style="font-size: 0.7em;">
+                    <ol>
+                        <li><strong>Dumps:</strong> Nightly 02:30 AM <code>pg_dumpall</code> & <code>mongodump</code>.</li>
+                        <li><strong>Compression:</strong> Gzip archiving of volumes (Uptime Kuma, Vault).</li>
+                        <li><strong>Transfer:</strong> <code>rsync</code> via <strong>Tailscale</strong> (WireGuard) to physical Bare Metal.</li>
+                        <li><strong>Governance:</strong> <code>find -mtime +7</code> auto-rotation.</li>
+                    </ol>
+                </div>
+                <p class="tag" style="margin-top: 20px;">S3 STORAGE FLOW</p>
+                <div style="font-size: 0.7em;">
+                    <p>Client → SDC Website API → <strong>MinIO (S3 Bucket)</strong> → Isolated Volume.</p>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: SDLC & DEVOPS -->
+            <section>
+                <h3>SDC Software Development Lifecycle</h3>
+                <div class="grid" style="font-size: 0.7em;">
+                    <div class="stat-card">
+                        <h4>DevOps Integration</h4>
+                        <ul style="text-align: left;">
+                            <li>Docker Compose for Env Parity.</li>
+                            <li><strong>Dozzle</strong> for real-time log monitoring.</li>
+                            <li>GitHub Actions for CI/CD.</li>
+                        </ul>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Core Principles</h4>
+                        <ul style="text-align: left;">
+                            <li><strong>Up-to-date:</strong> Latest patches.</li>
+                            <li><strong>Optimized:</strong> Matrix builds.</li>
+                            <li><strong>Secure:</strong> Encrypted secrets.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: CODE / DEMO -->
+            <section>
+                <h3>Live Execution / View Code</h3>
+                <p class="small-text">Implementation of the Incremental Backup Logic</p>
+                <pre><code class="bash" data-trim data-line-numbers="14-17">
+# Pushing Snapshots to Bare Metal via Secure Tunnel
+if ping -c 1 -W 2 "$REMOTE_HOST" &>/dev/null; then
+    log "Syncing Snapshots..."
+    # Rsync over Tailscale (No SSH Port 22 exposed to internet)
+    rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+        "$BACKUP_ROOT/" \
+        "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_SNAPSHOT_PATH}/"
+else
+    log "ERROR: Bare Metal unreachable."
+fi
+                </code></pre>
+            </section>
+
+            <!-- SLIDE 9: RESULTS & ANALYSIS -->
+            <section>
+                <h3>Results & Analysis</h3>
+                <div class="grid">
+                    <div class="stat-card">
+                        <h2 style="color: #50fa7b;">100%</h2>
+                        <p>Automation (Manual Effort 0)</p>
+                    </div>
+                    <div class="stat-card">
+                        <h2 style="color: #8be9fd;">~60%</h2>
+                        <p>Storage Optimization</p>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px; font-size: 0.8em;">
+                    <p><strong>Evaluation:</strong> Post-migration, the website remains responsive during high-volume uploads, and the server recovered from 2 simulated "crashes" in < 5 mins using the new snapshots.</p>
+                </div>
+            </section>
+
+            <!-- SLIDE 10: ACADEMIC CREDITS -->
+            <section>
+                <h3>Academic Credits</h3>
+                <div class="grid">
+                    <div class="stat-card">
+                        <h4>Project Guide</h4>
+                        <p>Dr. Dibakar Sinha</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Team Member</h4>
+                        <p>Vinayak Tyagi</p>
+                        <p style="font-size: 0.6em;">2427030346</p>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 50px; color: #6272a4;">Software Development Cell (SDC) • MUJ</p>
+            </section>
+
+            <!-- SLIDE 11: THANK YOU -->
+            <section style="text-align: center;">
+                <h1 style="font-size: 3em;">THANK YOU</h1>
+                <p>Ready for Questions</p>
+                <div style="margin-top: 50px;">
+                    <p class="tag">Link to Code</p>
+                    <p style="font-size: 0.6em;">github.com/vinayak-tyagi/pbl-sdc-automation-2427030346</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            transition: 'convex',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+
+        let totalTime = 10 * 60; 
+        let timeLeft = totalTime;
+        const timerElement = document.getElementById('auto-timer');
+        let timerRunning = false;
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function updateTimer() {
+            if (!timerRunning || timeLeft <= 0) return;
+            timeLeft--;
+            timerElement.innerText = formatTime(timeLeft);
+            if (timeLeft <= 120) timerElement.classList.add('warning');
+            if (timeLeft <= 30) { timerElement.classList.remove('warning'); timerElement.classList.add('danger'); }
+        }
+
+        Reveal.on('slidechanged', () => {
+            if (!timerRunning) {
+                timerRunning = true;
+                setInterval(updateTimer, 1000);
+            }
+        });
+
+        timerElement.onclick = () => {
+            timeLeft = totalTime;
+            timerElement.classList.remove('warning', 'danger');
+            timerElement.innerText = formatTime(timeLeft);
+        };
+    </script>
+</body>
+</html>
