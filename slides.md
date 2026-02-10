@@ -210,7 +210,7 @@ rsync -avz --delete
 </div>
 
 ---
-transition: fade-out
+transition: fade
 ---
 
 # Governance: Resource Limits
@@ -224,8 +224,6 @@ services:
     # One bug can take down the whole host
 ```
 
----
-transition: fade-in
 ---
 
 # Governance: Resource Limits
