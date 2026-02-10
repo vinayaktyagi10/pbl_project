@@ -65,26 +65,32 @@ We engineered a **Self-Healing Infrastructure** capable of surviving catastrophi
 
 # Team Role & Mandate
 
-As a **Core Infrastructure Engineer**, I was responsible for the reliability and security layers.
+As a **DevOps Engineer**, I was responsible for leading the reliability, security, and delivery layers.
 
-<div class="grid grid-cols-3 gap-4 mt-10">
+<div class="grid grid-cols-2 gap-4 mt-4">
 
 <div v-click class="bg-blue-900/20 p-4 rounded border-b-4 border-blue-500">
 
-#### Automation
-Designed the nightly cron-based backup logic and rotation policy.
+#### Automation & CI/CD
+We designed GHA pipelines to build and push images to our self-hosted Docker registry.
 </div>
 
 <div v-click class="bg-purple-900/20 p-4 rounded border-b-4 border-purple-500">
 
-#### Storage Migration
-Orchestrated the transition from local disk to S3-compatible MinIO.
+#### Storage & Backups
+We orchestrated the transition to MinIO S3 and designed the `rsync` snapshot logic.
 </div>
 
 <div v-click class="bg-green-900/20 p-4 rounded border-b-4 border-green-500">
 
 #### Security
-Configured Tailscale ACLs to enforce Zero Trust access control.
+We configured Tailscale ACLs to enforce Zero Trust and patched critical CVEs.
+</div>
+
+<div v-click class="bg-orange-900/20 p-4 rounded border-b-4 border-orange-500">
+
+#### Observability
+We deployed Dozzle for real-time log streaming and container health monitoring.
 </div>
 
 </div>
@@ -128,25 +134,26 @@ sequenceDiagram
 
 ---
 
-# Architecture Transformation
+# Architecture & Automated Delivery
 
-We moved from a Monolithic Legacy setup to a Modern Resilient Architecture.
+We moved from manual deployments to a **GitOps-inspired CI/CD pipeline**.
 
 ```mermaid
 graph LR
-    subgraph Legacy [Legacy (Fragile)]
-    A[Public Internet] -->|SSH :22| B(Server)
-    B --> C[(Local Disk Backup)]
+    subgraph Dev [Developer Space]
+    A[Code Commit] --> B[GitHub Actions]
     end
 
-    subgraph Modern [Modern (Resilient)]
-    D[Zero Trust Mesh] -->|VPN Only| E(Server)
-    E -->|Rsync Hardlinks| F[(Snapshot Volume)]
-    E -->|Object Storage| G[(MinIO S3)]
+    subgraph Infra [Private Infrastructure]
+    B -->|Push Image| C[(Private Registry)]
+    C -->|Pull| D(Production Server)
+    D -->|Backup| E[(MinIO S3)]
+    D -.->|Logs| F[Dozzle]
     end
 
-    style Legacy fill:#442222,stroke:#f00
-    style Modern fill:#224422,stroke:#0f0
+    style B fill:#24292e,color:#fff
+    style C fill:#442222,stroke:#f00
+    style D fill:#224422,stroke:#0f0
 ```
 
 ---
@@ -183,9 +190,38 @@ To           Action      From
 
 ---
 
+# Proactive Security Maintenance
+### Vulnerability Management (CVE-2025-66478)
+
+We orchestrated an emergency patching cycle for a **Critical RCE** in Next.js.
+
+<div class="grid grid-cols-2 gap-10 mt-4">
+
+<div>
+
+- **The Threat:** Remote Code Execution (CVSS 10.0) via RSC protocol deserialization.
+- **Scope:** **7 Projects** identified as vulnerable across the organization.
+- **Resolution:** Upgraded Next.js to 16.0.7+ and rotated critical secrets.
+
+</div>
+
+<div class="bg-red-900/20 p-4 rounded border-l-4 border-red-500">
+
+<div class="font-mono text-xs mb-2">SECURITY ADVISORY</div>
+
+"Successfully exploiting this vulnerability allows attackers to execute system commands and access sensitive environment variables."
+
+<div class="mt-2 text-right opacity-50 text-xs">— Next.js Security Team</div>
+
+</div>
+
+</div>
+
+---
+
 # Automated Incremental Backups
 
-I engineered a bash-based snapshot system using `rsync` hard-links.
+We engineered a bash-based snapshot system using `rsync` hard-links.
 
 <div class="grid grid-cols-2 gap-8">
 
@@ -210,6 +246,30 @@ rsync -avz --delete
 </div>
 
 ---
+
+# Observability: Real-Time Monitoring
+
+We implemented **Dozzle** to provide high-performance, real-time log visibility without the overhead of heavy ELK stacks.
+
+<div class="grid grid-cols-2 gap-10">
+
+<div>
+
+- **Zero Configuration:** Automatically discovers all running containers.
+- **Log Streaming:** Real-time visibility into application behavior.
+- **Resource Efficient:** Extremely low memory footprint.
+- **Security:** Access restricted via Tailscale VPN.
+
+</div>
+
+<div class="bg-black/40 p-2 rounded shadow-2xl border border-white/10">
+<img src="https://raw.githubusercontent.com/amir20/dozzle/master/docs/demo.gif" class="rounded" />
+<div class="text-[10px] text-center mt-2 opacity-50 italic">Dozzle Interface: Real-time container log streaming</div>
+</div>
+
+</div>
+
+---
 transition: fade
 ---
 
@@ -227,7 +287,7 @@ services:
 ---
 
 # Governance: Resource Limits
-### The Resilient Config (My Implementation)
+### The Resilient Config (Our Implementation)
 
 ```yaml {6-11}
 services:
@@ -297,6 +357,8 @@ Quantifying the impact of these engineering changes.
   - Implement "Chaos Monkey" for auto-restart verification.
 - **Phase 3: Multi-Region Sync**
   - Off-site replication for disaster recovery.
+- **Phase 4: Security Guardrails**
+  - Automate dependency patching (Renovate/Dependabot) to prevent zero-day exposure.
 
 ---
 layout: center

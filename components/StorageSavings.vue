@@ -20,7 +20,7 @@ const savings = computed(() => (totalSize.value - Number(savedSize.value)).toFix
         <span class="text-2xl font-bold">{{ totalSize }} GB</span>
       </div>
       <div class="p-4 bg-green-900/20 rounded border border-green-500/30">
-        <span class="block text-xs uppercase opacity-60">My Optimized System</span>
+        <span class="block text-xs uppercase opacity-60">Our Optimized System</span>
         <span class="text-2xl font-bold">{{ savedSize }} GB</span>
       </div>
     </div>
