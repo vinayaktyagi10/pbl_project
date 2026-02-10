@@ -1,24 +1,38 @@
-# SDC Infrastructure Automation - PBL Presentation
+# SDC Infrastructure Automation - PBL Semester 4
 
-This is a web-based presentation built with [Reveal.js](https://revealjs.com/). It functions like a PowerPoint but runs in a web browser using HTML, CSS, and JavaScript.
+A high-resilience infrastructure presentation built with [Slidev](https://sli.dev/).
 
 ## Features
-- **Auto-Timer:** A countdown timer (top-right) starts automatically when you change the first slide. It turns orange at 2 mins left and red at 30 seconds left.
-- **Code Highlighting:** Optimized for showing Bash and JavaScript snippets.
-- **Mobile Responsive:** Works on phones and tablets.
+- **Modern Tech Stack:** Built with Vue, Vite, and Markdown.
+- **Architectural Diagrams:** Powered by Mermaid.js.
+- **Developer First:** Focuses on engineering principles (Zero Trust, cgroups, RPO/RTO).
+- **Auto-Deploy:** Integrated GitHub Actions for seamless hosting on GitHub Pages.
 
-## How to View Locally
-1. Simply double-click `index.html` to open it in your browser.
-2. Press `F11` for Full Screen mode.
-3. Use Arrow Keys or Spacebar to navigate.
+## Getting Started
 
-## How to Deploy to GitHub Pages
-1. Push this folder to a GitHub repository.
-2. Go to **Settings** > **Pages**.
-3. Under **Branch**, select `main` (or `master`) and keep the folder as `/ (root)`.
-4. Click **Save**.
-5. Wait ~1 minute, and your presentation will be live at `https://your-username.github.io/repo-name/`.
+### Local Development
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+3. Open `http://localhost:3030` in your browser.
 
-## Customization
-- **Edit Content:** Open `index.html` in a text editor (VS Code, Notepad, etc.).
-- **Change Timer:** Search for `let totalTime = 10 * 60;` in `index.html` and change `10` to your desired minutes.
+### Key Commands
+- `o`: Overview mode
+- `p`: Presenter mode
+- `m`: Toggle drawings
+
+## Deployment
+This project is configured to auto-deploy to GitHub Pages via GitHub Actions.
+1. Push changes to the `main` branch.
+2. Ensure **Settings > Pages > Build and deployment > Source** is set to **GitHub Actions**.
+
+## Project Highlights
+- **Resilient Backups:** Incremental snapshot logic using rsync hard-links.
+- **Security:** Zero Trust Mesh VPN (Tailscale).
+- **Stability:** Linux kernel-level resource constraints (cgroups).
+- **Modern Storage:** Migration to S3-compatible Object Storage (MinIO).

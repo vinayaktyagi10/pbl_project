@@ -1,0 +1,14 @@
+{
+  "name": "pbl-presentation-v2",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.48.0",
+    "slidev-theme-dracula": "latest",
+    "playwright-chromium": "^1.41.0"
+  }
+}
