@@ -28,7 +28,10 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npx slidev build --base /${{ github.event.repository.name }}/
+        run: |
+          npx slidev build --out dist/slides --base /${{ github.event.repository.name }}/slides/
+          cp sdc_logo.jpg dist/slides/
+          cp index.html sdc_logo.jpg dist/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

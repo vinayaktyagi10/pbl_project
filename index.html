@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PBL Semester 4 - SDC Infrastructure DevOps Project by Vinayak Tyagi and the DevOps Team. Automated CI/CD, Zero Trust Security, and Cloud-Native Architecture.">
+    <meta name="keywords" content="PBL, Project Based Learning, DevOps, CI/CD, Docker, Security, Vinayak Tyagi, SDC, Infrastructure Automation">
+    <meta name="author" content="Vinayak Tyagi - SDC DevOps Team">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="PBL Project | SDC Infrastructure - Vinayak Tyagi">
+    <meta property="og:description" content="Resilient infrastructure automation PBL project by Vinayak Tyagi and the SDC DevOps Team.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="sdc_logo.jpg">
+    
+    <title>PBL Project | SDC Infrastructure - Vinayak Tyagi</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --bg-primary: #282a36;
+            --bg-secondary: #383a59;
+            --bg-terminal: #1e1f29;
+            --accent-purple: #bd93f9;
+            --accent-green: #50fa7b;
+            --accent-pink: #ff79c6;
+            --accent-orange: #ffb86c;
+            --accent-red: #ff5555;
+            --accent-cyan: #8be9fd;
+            --text-primary: #f8f8f2;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .dracula-accent { color: var(--accent-purple); }
+        .dracula-green { color: var(--accent-green); }
+        .dracula-pink { color: var(--accent-pink); }
+        .dracula-orange { color: var(--accent-orange); }
+        .dracula-red { color: var(--accent-red); }
+        .dracula-cyan { color: var(--accent-cyan); }
+
+        .terminal {
+            background-color: var(--bg-terminal);
+            border-radius: 0.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .section-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(189, 147, 249, 0.6);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-purple);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .tech-pill:hover {
+            background: rgba(189, 147, 249, 0.1);
+            border-color: var(--accent-purple);
+            transform: scale(1.05);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: #44475a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
+
+        .mermaid { background: white; padding: 2rem; border-radius: 1rem; }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 40;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .code-block {
+            background: #1e1f29;
+            border-left: 4px solid var(--accent-cyan);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="leading-relaxed">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-[#282a36]/95 backdrop-blur-xl border-b border-white/5 py-4 px-8" role="navigation" aria-label="Main navigation">
+        <div class="flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-4">
+                <img src="sdc_logo.jpg" alt="SDC Infrastructure Logo" class="h-10 w-10 rounded-lg" loading="eager">
+                <div>
+                    <div class="font-bold dracula-cyan leading-none uppercase">PBL Semester 4</div>
+                    <div class="text-[9px] uppercase tracking-widest opacity-50 font-black">Project Based Learning</div>
+                </div>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex gap-8 text-[10px] font-bold uppercase tracking-widest">
+                <a href="./slides" class="nav-link dracula-pink">Presentation</a>
+                <a href="#pipeline" class="nav-link">Pipeline</a>
+                <a href="#security" class="nav-link">Security</a>
+                <a href="#monitoring" class="nav-link">Monitoring</a>
+                <a href="#infrastructure" class="nav-link">Infrastructure</a>
+                <a href="#storage" class="nav-link">Storage</a>
+                <a href="#automation" class="nav-link">Automation</a>
+                <a href="#roadmap" class="nav-link">Roadmap</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="lg:hidden text-2xl dracula-cyan" aria-label="Toggle mobile menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-[#282a36] border-l border-white/10 z-50 lg:hidden" role="navigation" aria-label="Mobile navigation">
+        <div class="p-6">
+            <button id="close-menu-btn" class="text-2xl dracula-pink mb-8 float-right" aria-label="Close mobile menu">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="clear-both pt-8 space-y-6 text-sm font-bold uppercase tracking-widest">
+                <a href="./slides" class="block nav-link mobile-nav-link dracula-pink">Presentation</a>
+                <a href="#pipeline" class="block nav-link mobile-nav-link">Pipeline</a>
+                <a href="#security" class="block nav-link mobile-nav-link">Security</a>
+                <a href="#monitoring" class="block nav-link mobile-nav-link">Monitoring</a>
+                <a href="#infrastructure" class="block nav-link mobile-nav-link">Infrastructure</a>
+                <a href="#storage" class="block nav-link mobile-nav-link">Storage</a>
+                <a href="#automation" class="block nav-link mobile-nav-link">Automation</a>
+                <a href="#roadmap" class="block nav-link mobile-nav-link">Roadmap</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
+                 alt="Technology background"
+                 class="w-full h-full object-cover opacity-20 scale-110"
+                 loading="eager">
+            <div class="absolute inset-0 bg-gradient-to-b from-[#282a36]/0 via-[#282a36]/50 to-[#282a36]"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-4 py-20" data-aos="zoom-out">
+            <div class="inline-block px-4 py-1 rounded-full border border-dracula-accent/30 bg-dracula-accent/10 text-dracula-accent text-xs font-bold uppercase tracking-widest mb-6">
+                Project Based Learning | SDC Infrastructure
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-6 dracula-cyan tracking-tighter uppercase">Resilient By Design</h1>
+            <p class="text-xl md:text-2xl opacity-80 mb-8 font-medium max-w-2xl mx-auto">
+                Scaling reliability and security through automated delivery and kernel-level governance.
+            </p>
+            <p class="text-sm md:text-base opacity-60 mb-12 font-medium max-w-xl mx-auto">
+                A PBL Project by <span class="dracula-pink font-bold">Vinayak Tyagi</span> (DevOps Team)
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-6 items-center flex-wrap">
+                <a href="./slides" class="flex items-center gap-3 bg-dracula-pink/20 hover:bg-dracula-pink/30 px-8 py-4 rounded-2xl border border-dracula-pink/50 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-dracula-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-play dracula-pink"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-xs opacity-50 font-bold uppercase">Open Slides</div>
+                        <div class="font-bold">View Full Presentation</div>
+                    </div>
+                </a>
+                <div class="flex items-center gap-3 bg-white/5 px-6 py-3 rounded-2xl border border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-dracula-pink/20 flex items-center justify-center">
+                        <i class="fas fa-users dracula-pink"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-xs opacity-50 font-bold uppercase">Role</div>
+                        <div class="font-bold">DevOps Team Member</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 bg-white/5 px-6 py-3 rounded-2xl border border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-dracula-green/20 flex items-center justify-center">
+                        <i class="fas fa-graduation-cap dracula-green"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-xs opacity-50 font-bold uppercase">Academic</div>
+                        <div class="font-bold">Semester 4, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="max-w-6xl mx-auto px-6 py-20 space-y-48">
+
+        <!-- Overview Section -->
+        <section data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-6 dracula-accent">PBL Project Overview</h2>
+                <p class="text-lg opacity-70 max-w-3xl mx-auto leading-relaxed">
+                    This Project Based Learning initiative focused on transforming a manual, fragile infrastructure into a self-healing, automated system. 
+                    As a member of the DevOps team, I focused on implementing robust CI/CD, proactive security, and high-efficiency storage solutions.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="section-card p-8 rounded-3xl text-center">
+                    <div class="text-5xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold dracula-cyan mb-3">Objective</h3>
+                    <p class="text-sm opacity-70 leading-relaxed">
+                        Eliminate manual failure points and establish a governance model for containerized workloads.
+                    </p>
+                </div>
+                <div class="section-card p-8 rounded-3xl text-center">
+                    <div class="text-5xl mb-4">🔧</div>
+                    <h3 class="text-xl font-bold dracula-green mb-3">DevOps Approach</h3>
+                    <p class="text-sm opacity-70 leading-relaxed">
+                        Utilizing Docker, GitHub Actions, and Zero Trust networking to ensure 99.9% availability.
+                    </p>
+                </div>
+                <div class="section-card p-8 rounded-3xl text-center">
+                    <div class="text-5xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold dracula-pink mb-3">Metrics</h3>
+                    <p class="text-sm opacity-70 leading-relaxed">
+                        Achieved a 48x faster RTO and 24x better RPO through automated recovery and snapshots.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="section-card p-10 rounded-3xl">
+                <h3 class="text-2xl font-black mb-8 dracula-cyan text-center uppercase">DevOps Toolbox</h3>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="tech-pill p-4 rounded-xl text-center">
+                        <i class="fab fa-docker text-3xl mb-2 dracula-cyan"></i>
+                        <h4 class="text-xs font-bold uppercase">Docker</h4>
+                    </div>
+                    <div class="tech-pill p-4 rounded-xl text-center">
+                        <i class="fab fa-github text-3xl mb-2 dracula-pink"></i>
+                        <h4 class="text-xs font-bold uppercase">GHA</h4>
+                    </div>
+                    <div class="tech-pill p-4 rounded-xl text-center">
+                        <i class="fas fa-network-wired text-3xl mb-2 dracula-green"></i>
+                        <h4 class="text-xs font-bold uppercase">Tailscale</h4>
+                    </div>
+                    <div class="tech-pill p-4 rounded-xl text-center">
+                        <i class="fas fa-database text-3xl mb-2 dracula-orange"></i>
+                        <h4 class="text-xs font-bold uppercase">MinIO</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Section -->
+        <section id="pipeline" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-cyan">Automated Delivery Pipeline</h2>
+                <p class="opacity-60 text-lg">Replacing manual deployments with a robust CI/CD workflow</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h3 class="text-2xl font-black mb-6">Continuous Integration</h3>
+                    <p class="text-lg opacity-80 mb-6 leading-relaxed">
+                        Our team engineered a GitOps-inspired pipeline using **GitHub Actions** that automates everything from linting to container orchestration.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start text-sm opacity-70">
+                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
+                            <span><strong>Multi-stage builds</strong> to optimize image size and security.</span>
+                        </li>
+                        <li class="flex items-start text-sm opacity-70">
+                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
+                            <span><strong>Automated vulnerability scans</strong> integrated directly into the PR flow.</span>
+                        </li>
+                        <li class="flex items-start text-sm opacity-70">
+                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
+                            <span><strong>Zero-downtime restarts</strong> on production servers via SSH runners.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="terminal overflow-hidden" id="terminal-sim">
+                    <div class="bg-[#44475a]/30 px-4 py-2 flex justify-between items-center border-b border-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="text-[9px] uppercase font-bold opacity-40 tracking-widest">GHA Runner Simulation</div>
+                    </div>
+                    <div class="p-6 h-[320px] overflow-y-auto text-[11px] font-mono">
+                        <div v-for="log in logs" :key="log.id" :class="log.type" class="mb-1">
+                            <span class="opacity-30 mr-2">[{{ log.time }}]</span>
+                            <span v-html="log.text"></span>
+                        </div>
+                        <div v-if="isRunning" class="inline-block w-2 h-4 bg-dracula-green animate-pulse ml-1 align-middle"></div>
+                        <div v-if="!isRunning" class="mt-4">
+                            <button @click="runSimulation" class="bg-dracula-green/20 hover:bg-dracula-green/30 text-dracula-green border border-dracula-green/50 px-4 py-1 rounded text-[10px] font-bold uppercase transition-all">
+                                Trigger Build
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="security" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-pink">Zero Trust & Proactive Security</h2>
+                <p class="opacity-60 text-lg">Eliminating attack surfaces and managing critical vulnerabilities</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-red">
+                    <h3 class="text-xl font-bold dracula-red mb-4">Critical Patching: CVE-2025-66478</h3>
+                    <p class="opacity-80 mb-6 text-sm leading-relaxed">
+                        Our team orchestrated an emergency response to a critical RCE in the **Next.js RSC protocol**. We identification and patched **7 production projects** within 24 hours of disclosure.
+                    </p>
+                    <div class="bg-black/30 p-4 rounded-xl text-[11px] font-mono">
+                        <div class="text-dracula-orange"># Severity: 10.0 (Critical)</div>
+                        <div class="text-white/70">Action: Upgraded to Next.js v16.0.7+</div>
+                        <div class="text-dracula-green">Result: Zero exploitation detected</div>
+                    </div>
+                </div>
+
+                <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-green">
+                    <h3 class="text-xl font-bold dracula-green mb-4">Zero Trust Networking</h3>
+                    <p class="opacity-80 mb-6 text-sm leading-relaxed">
+                        We eliminated public SSH ports by implementing **Tailscale**. Servers are now effectively invisible to the public internet, requiring identity-based SSO for access.
+                    </p>
+                    <div class="flex gap-4">
+                        <div class="bg-white/5 p-3 rounded-lg text-center flex-1">
+                            <i class="fas fa-ghost dracula-cyan mb-1"></i>
+                            <div class="text-[9px] font-bold uppercase opacity-50">Stealth Mode</div>
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-lg text-center flex-1">
+                            <i class="fas fa-lock dracula-pink mb-1"></i>
+                            <div class="text-[9px] font-bold uppercase opacity-50">Identity MFA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monitoring Section -->
+        <section id="monitoring" data-aos="fade-up">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="order-2 md:order-1">
+                    <div class="bg-black/50 p-3 rounded-2xl border border-white/10 shadow-2xl overflow-hidden relative">
+                        <img src="https://raw.githubusercontent.com/amir20/dozzle/master/docs/demo.gif" alt="Dozzle Demo" class="rounded-lg opacity-80">
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                            <div class="text-[10px] font-bold uppercase tracking-widest dracula-cyan">Live Log Streaming</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <h2 class="text-4xl font-black mb-6 dracula-orange">Observability: Dozzle</h2>
+                    <p class="text-lg opacity-80 mb-8 leading-relaxed">
+                        Implemented **Dozzle** for lightweight, real-time log monitoring. It provides our team with instant visibility into container health with nearly zero resource overhead.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                            <i class="fas fa-bolt dracula-orange text-xl"></i>
+                            <div class="text-sm">Instant logs without heavy indexing.</div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                            <i class="fas fa-shield-alt dracula-green text-xl"></i>
+                            <div class="text-sm">Secure access via Tailscale VPN.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Infrastructure Architecture Section -->
+        <section id="infrastructure" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-cyan uppercase">System Architecture</h2>
+                <p class="opacity-60 text-lg">A visual breakdown of our automated delivery and storage layer</p>
+            </div>
+            
+            <div class="section-card p-10 rounded-3xl">
+                <div class="mermaid flex justify-center">
+graph LR
+    subgraph Dev [Developer Space]
+    A[Code Commit] --> B[GitHub Actions]
+    end
+
+    subgraph Infra [Private Infrastructure]
+    B -->|Push Image| C[(Private Registry)]
+    C -->|Pull| D(Production Server)
+    D -->|Backup| E[(MinIO S3)]
+    D -.->|Logs| F[Dozzle]
+    end
+
+    style B fill:#24292e,color:#fff
+    style C fill:#442222,stroke:#f00
+    style D fill:#224422,stroke:#0f0
+                </div>
+                <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">Dockerized</div>
+                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">GitOps-Ready</div>
+                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">S3 Compliant</div>
+                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">Self-Healing</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Storage & Backups -->
+        <section id="storage" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-green">Smart Storage Strategy</h2>
+                <p class="opacity-60 text-lg">Transitioning to MinIO Object Storage with Incremental Snapshots</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-stretch" id="storage-app">
+                <!-- Calculator Card -->
+                <div class="section-card p-12 rounded-[2.5rem] border-2 border-dracula-green/20 bg-[#282a36] shadow-2xl">
+                    <h3 class="text-2xl font-black mb-10 flex items-center">
+                        <i class="fas fa-calculator mr-4 dracula-green"></i> Storage ROI
+                    </h3>
+                    
+                    <div class="mb-12">
+                        <div class="flex justify-between mb-6">
+                            <label class="text-xs font-black dracula-cyan uppercase tracking-widest">Backup Retention</label>
+                            <span class="text-2xl font-black text-white bg-dracula-pink/20 px-4 py-1 rounded-xl">{{ days }} <span class="text-xs opacity-50 ml-1">Days</span></span>
+                        </div>
+                        <input type="range" v-model.number="days" min="1" max="365" 
+                               class="w-full h-4 bg-gray-700 rounded-full appearance-none cursor-pointer accent-dracula-pink border-4 border-[#282a36]">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 mb-10 text-center">
+                        <div class="p-4 rounded-xl bg-[#44475a]/50">
+                            <div class="text-[9px] uppercase font-black opacity-40 mb-1">Legacy Full</div>
+                            <div class="text-2xl font-black dracula-red">{{ totalSize }} GB</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-[#44475a]/50 border border-dracula-green/20">
+                            <div class="text-[9px] uppercase font-black opacity-40 mb-1">Team Snap</div>
+                            <div class="text-2xl font-black dracula-green">{{ savedSize }} GB</div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-dracula-green rounded-3xl text-center shadow-2xl transform hover:scale-[1.03] transition-all text-[#282a36]">
+                        <div class="text-[10px] uppercase font-black opacity-70 mb-1">Total Space Saved</div>
+                        <div class="text-4xl font-black">{{ (totalSize - savedSize).toFixed(0) }} GB</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-between space-y-8">
+                    <div class="section-card p-8 rounded-3xl">
+                        <h4 class="font-bold dracula-cyan mb-4 flex items-center uppercase tracking-widest text-xs">
+                            <i class="fas fa-hdd mr-3"></i> The MinIO Advantage
+                        </h4>
+                        <ul class="space-y-3 text-sm opacity-80">
+                            <li>• **Immutability:** WORM locking prevents ransomware.</li>
+                            <li>• **Decoupled:** Scale storage independently of compute.</li>
+                            <li>• **High Availability:** Erasure coding for data durability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-black/30 p-8 rounded-3xl border border-white/5 font-mono text-xs">
+                        <div class="dracula-orange mb-4"># Incremental Logic (Bash)</div>
+                        <div class="text-white">rsync -avz --link-dest=../latest /src/ /dest/snap-$(date +%F)/</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Automation Section -->
+        <section id="automation" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-accent">Governance & Automation</h2>
+                <p class="opacity-60 text-lg">Kernel-level constraints and self-healing systems</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="section-card p-10 rounded-3xl">
+                    <h3 class="text-2xl font-black mb-6 dracula-orange uppercase tracking-tighter">Resource Governance</h3>
+                    <p class="text-sm opacity-80 mb-6">
+                        By applying Linux **cgroups** via Docker Compose, we ensured that no single container can take down the host.
+                    </p>
+                    <div class="code-block text-[11px]">
+<pre>deploy:
+  resources:
+    limits:
+      cpus: '0.50' # 50% CPU Cap
+      memory: 512M # OOM Guard</pre>
+                    </div>
+                </div>
+                <div class="section-card p-10 rounded-3xl">
+                    <h3 class="text-2xl font-black mb-6 dracula-cyan uppercase tracking-tighter">Reliability Metrics</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                            <span class="text-xs uppercase opacity-50 font-bold">Uptime</span>
+                            <span class="text-2xl font-black dracula-green">99.9%</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                            <span class="text-xs uppercase opacity-50 font-bold">RPO (Recovery Point)</span>
+                            <span class="text-2xl font-black dracula-cyan">1 Hour</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                            <span class="text-xs uppercase opacity-50 font-bold">RTO (Recovery Time)</span>
+                            <span class="text-2xl font-black dracula-pink">< 5 Mins</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-4 dracula-cyan">PBL Roadmap</h2>
+                <p class="opacity-60 text-lg">Project evolution from Semester 4 and beyond</p>
+            </div>
+            
+            <div class="relative max-w-4xl mx-auto px-10 border-l-2 border-white/10 ml-6 md:ml-auto">
+                <div class="mb-12 relative" data-aos="fade-left">
+                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-green flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
+                        <i class="fas fa-check text-xs"></i>
+                    </div>
+                    <h4 class="text-xl font-bold dracula-green uppercase">Phase 1: Foundation ✓</h4>
+                    <p class="opacity-60 mt-2 text-sm">CI/CD, Zero Trust Networking, and Resource Capping.</p>
+                </div>
+                
+                <div class="mb-12 relative" data-aos="fade-left" data-aos-delay="200">
+                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-orange flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
+                        <i class="fas fa-hourglass-half text-xs"></i>
+                    </div>
+                    <h4 class="text-xl font-bold dracula-orange uppercase">Phase 2: Chaos Engineering</h4>
+                    <p class="opacity-60 mt-2 text-sm">Implementing "Chaos Monkey" testing for self-healing verification.</p>
+                </div>
+                
+                <div class="relative" data-aos="fade-left" data-aos-delay="400">
+                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/30 font-black border-4 border-[#282a36]">
+                        <i class="fas fa-rocket text-xs"></i>
+                    </div>
+                    <h4 class="text-xl font-bold opacity-30 uppercase">Phase 3: Multi-Region</h4>
+                    <p class="opacity-30 mt-2 text-sm">Automated regional failover and geographic replication.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-24 text-center border-t border-white/5 bg-black/40">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-3xl font-black mb-4 dracula-cyan tracking-tighter uppercase">SDC Infrastructure Team</h2>
+            <p class="text-xs opacity-60 mb-12 uppercase tracking-[0.2em]">
+                PBL Semester 4 Project by <span class="dracula-pink font-bold">Vinayak Tyagi</span>
+            </p>
+            <div class="flex justify-center gap-10 mb-12">
+                <a href="https://github.com/vinayaktyagi10/pbl_project" class="group text-center">
+                    <div class="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:bg-dracula-pink transition-all border border-white/10">
+                        <i class="fab fa-github text-xl"></i>
+                    </div>
+                    <span class="text-[9px] uppercase font-black opacity-40 tracking-widest">Source Code</span>
+                </a>
+            </div>
+            <p class="text-[9px] font-mono opacity-20 uppercase tracking-[0.5em]">Resilience • Security • Automation • 2026</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top bg-dracula-cyan text-[#282a36] w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+        
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        // Terminal Simulator
+        createApp({
+            setup() {
+                const logs = ref([]);
+                const isRunning = ref(false);
+                let logId = 0;
+
+                const addLog = (text, type = '', delay = 1000) => {
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            const now = new Date();
+                            logs.value.push({
+                                id: logId++,
+                                time: now.toTimeString().split(' ')[0],
+                                text: text,
+                                type: type
+                            });
+                            const el = document.querySelector('#terminal-sim .p-6');
+                            if (el) el.scrollTop = el.scrollHeight;
+                            resolve();
+                        }, delay);
+                    });
+                };
+
+                const runSimulation = async () => {
+                    if (isRunning.value) return;
+                    isRunning.value = true;
+                    logs.value = [];
+                    await addLog('GHA: Initializing PBL Workflow...', 'dracula-cyan', 500);
+                    await addLog('GHA: Running Security Scan...', '', 1200);
+                    await addLog('<span class="dracula-green">✓ No Critical CVEs found.</span>', '', 400);
+                    await addLog('GHA: Building Docker Image...', 'dracula-orange', 1500);
+                    await addLog('GHA: Pushing to SDC Registry...', '', 1000);
+                    await addLog('GHA: Executing Remote Deploy...', 'dracula-cyan', 1200);
+                    await addLog('<span class="dracula-green font-bold">🚀 SYSTEM ONLINE & SECURE</span>', 'text-xl', 800);
+                    isRunning.value = false;
+                };
+
+                onMounted(() => { runSimulation(); });
+                return { logs, isRunning, runSimulation };
+            }
+        }).mount('#terminal-sim');
+
+        // Storage Calculator
+        createApp({
+            setup() {
+                const days = ref(30);
+                const totalSize = computed(() => days.value * 50);
+                const savedSize = computed(() => (50 + (days.value - 1) * 0.2).toFixed(1));
+                return { days, totalSize, savedSize };
+            }
+        }).mount('#storage-app');
+
+        // Nav & UI logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
+        closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('active'));
+        document.querySelectorAll('.mobile-nav-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('active')));
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) backToTopBtn.classList.add('visible');
+            else backToTopBtn.classList.remove('visible');
+        });
+        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+</body>
+</html>
