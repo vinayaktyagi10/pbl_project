@@ -30,8 +30,8 @@ jobs:
       - name: Build
         run: |
           npx slidev build --out dist/slides --base /${{ github.event.repository.name }}/slides/
-          cp sdc_logo.jpg dist/slides/
-          cp index.html sdc_logo.jpg dist/
+          cp index.html dist/
+          cp public/* dist/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

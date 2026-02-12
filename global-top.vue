@@ -1,5 +1,5 @@
 <template>
-  <img src="./sdc_logo.jpg" class="sdc-logo" />
+  <img src="/sdc_logo.jpg" class="sdc-logo" />
   <a href="../" class="back-home-link">
     🏠 Home
   </a>
