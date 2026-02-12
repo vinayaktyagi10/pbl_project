@@ -270,8 +270,8 @@ We implemented **Dozzle** to provide high-performance, real-time log visibility 
 </div>
 
 <div class="bg-black/40 p-2 rounded shadow-2xl border border-white/10">
-<img src="/dozzle_screenshot.png" class="rounded" />
-<div class="text-[10px] text-center mt-2 opacity-50 italic">Dozzle Interface: Real-time container log streaming</div>
+<img src="./dozzle_screenshot.png" class="rounded" />
+<div class="text-[10px] text-center mt-2 opacity-50 italic">Dozzle Interface: Static view of container log dashboard</div>
 </div>
 
 </div>

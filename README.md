@@ -1,12 +1,22 @@
 # SDC Infrastructure Automation - PBL Semester 4
 
-A high-resilience infrastructure presentation built with [Slidev](https://sli.dev/).
+A high-resilience infrastructure portfolio and presentation built for Project Based Learning (PBL).
+
+**Under the guidance of Dr. Dibakar Sinha**
 
 ## Features
-- **Modern Tech Stack:** Built with Vue, Vite, and Markdown.
-- **Architectural Diagrams:** Powered by Mermaid.js.
+- **Modern Tech Stack:** Built with Vue 3, Tailwind CSS, and Slidev.
+- **Interactive Portfolio:** A professional landing page with custom UI/UX enhancements.
+- **Themed Visuals:** Dracula-inspired design with custom-themed Mermaid.js diagrams.
+- **Architectural Diagrams:** Visualized system flows and GitOps pipelines.
 - **Developer First:** Focuses on engineering principles (Zero Trust, cgroups, RPO/RTO).
 - **Auto-Deploy:** Integrated GitHub Actions for seamless hosting on GitHub Pages.
+
+## Portfolio Enhancements
+- **Scroll Progress Indicator:** Visual tracking of content reading.
+- **Live System Status:** Operational heart-beat indicator in the navigation.
+- **Code Snippet Utility:** One-click copy buttons for all technical snippets.
+- **Observability View:** Static dashboard view of container health via Dozzle.
 
 ## Getting Started
 
