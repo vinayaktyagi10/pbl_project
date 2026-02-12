@@ -25,7 +25,7 @@ const savings = computed(() => (totalSize.value - Number(savedSize.value)).toFix
       </div>
     </div>
 
-    <div class="mt-4 p-3 bg-pink-600 rounded text-center font-bold animate-pulse">
+    <div class="mt-4 p-3 bg-[#50fa7b] rounded text-center font-bold text-[#282a36] shadow-lg">
       Total Savings: {{ savings }} GB
     </div>
   </div>

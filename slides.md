@@ -17,6 +17,10 @@ mdc: true
 PBL Semester 4 | 2026
 </div>
 
+<div class="mt-4 text-sm opacity-60 italic">
+Under the guidance of <strong>Dr. Dibakar Sinha</strong>
+</div>
+
 <div class="abs-br m-6 flex gap-2">
   <span class="text-sm opacity-50">Vinayak Tyagi (2427030346)</span>
 </div>
@@ -139,6 +143,7 @@ sequenceDiagram
 We moved from manual deployments to a **GitOps-inspired CI/CD pipeline**.
 
 ```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#bd93f9', 'lineColor': '#8be9fd', 'secondaryColor': '#50fa7b', 'tertiaryColor': '#ff79c6'}}}%%
 graph LR
     subgraph Dev [Developer Space]
     A[Code Commit] --> B[GitHub Actions]
@@ -151,9 +156,11 @@ graph LR
     D -.->|Logs| F[Dozzle]
     end
 
-    style B fill:#24292e,color:#fff
-    style C fill:#442222,stroke:#f00
-    style D fill:#224422,stroke:#0f0
+    style B fill:#bd93f9,color:#282a36,stroke:#bd93f9
+    style C fill:#ff5555,color:#fff,stroke:#ff5555
+    style D fill:#50fa7b,color:#282a36,stroke:#50fa7b
+    style E fill:#ffb86c,color:#282a36,stroke:#ffb86c
+    style F fill:#8be9fd,color:#282a36,stroke:#8be9fd
 ```
 
 ---
@@ -263,7 +270,7 @@ We implemented **Dozzle** to provide high-performance, real-time log visibility 
 </div>
 
 <div class="bg-black/40 p-2 rounded shadow-2xl border border-white/10">
-<img src="https://raw.githubusercontent.com/amir20/dozzle/master/docs/demo.gif" class="rounded" />
+<img src="/dozzle_screenshot.png" class="rounded" />
 <div class="text-[10px] text-center mt-2 opacity-50 italic">Dozzle Interface: Real-time container log streaming</div>
 </div>
 

@@ -53,6 +53,7 @@
         .dracula-orange { color: var(--accent-orange); }
         .dracula-red { color: var(--accent-red); }
         .dracula-cyan { color: var(--accent-cyan); }
+        .bg-dracula-green { background-color: var(--accent-green); }
 
         .terminal {
             background-color: var(--bg-terminal);
@@ -106,7 +107,59 @@
         ::-webkit-scrollbar-thumb { background: #44475a; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
 
-        .mermaid { background: white; padding: 2rem; border-radius: 1rem; }
+        .mermaid { 
+            background: rgba(0,0,0,0.2); 
+            padding: 2rem; 
+            border-radius: 1.5rem; 
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-pink), var(--accent-purple));
+            z-index: 100;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Status Pulse */
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 0 0 rgba(80, 250, 123, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(80, 250, 123, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(80, 250, 123, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(80, 250, 123, 0); }
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            color: var(--accent-cyan);
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0;
+        }
+        .code-block:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { background: var(--accent-cyan); color: var(--bg-primary); }
 
         .mobile-menu {
             transform: translateX(100%);
@@ -142,6 +195,7 @@
     </style>
 </head>
 <body class="leading-relaxed">
+    <div id="scroll-progress"></div>
 
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 bg-[#282a36]/95 backdrop-blur-xl border-b border-white/5 py-4 px-8" role="navigation" aria-label="Main navigation">
@@ -149,7 +203,13 @@
             <div class="flex items-center gap-4">
                 <img src="sdc_logo.jpg" alt="SDC Infrastructure Logo" class="h-10 w-10 rounded-lg" loading="eager">
                 <div>
-                    <div class="font-bold dracula-cyan leading-none uppercase">PBL Semester 4</div>
+                    <div class="flex items-center gap-2">
+                        <div class="font-bold dracula-cyan leading-none uppercase">PBL Semester 4</div>
+                        <div class="px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center">
+                            <span class="status-pulse"></span>
+                            <span class="text-[7px] font-black text-green-400 uppercase tracking-tighter">Operational</span>
+                        </div>
+                    </div>
                     <div class="text-[9px] uppercase tracking-widest opacity-50 font-black">Project Based Learning</div>
                 </div>
             </div>
@@ -210,8 +270,11 @@
             <p class="text-xl md:text-2xl opacity-80 mb-8 font-medium max-w-2xl mx-auto">
                 Scaling reliability and security through automated delivery and kernel-level governance.
             </p>
-            <p class="text-sm md:text-base opacity-60 mb-12 font-medium max-w-xl mx-auto">
+            <p class="text-sm md:text-base opacity-60 mb-8 font-medium max-w-xl mx-auto">
                 A PBL Project by <span class="dracula-pink font-bold">Vinayak Tyagi</span> (DevOps Team)
+            </p>
+            <p class="text-xs opacity-50 italic mb-12">
+                Under the supervision of <span class="dracula-cyan font-bold">Dr. Dibakar Sinha</span>
             </p>
             <div class="flex flex-col md:flex-row justify-center gap-6 items-center flex-wrap">
                 <a href="./slides" class="flex items-center gap-3 bg-dracula-pink/20 hover:bg-dracula-pink/30 px-8 py-4 rounded-2xl border border-dracula-pink/50 transition-all group">
@@ -370,7 +433,7 @@
                 <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-red">
                     <h3 class="text-xl font-bold dracula-red mb-4">Critical Patching: CVE-2025-66478</h3>
                     <p class="opacity-80 mb-6 text-sm leading-relaxed">
-                        Our team orchestrated an emergency response to a critical RCE in the **Next.js RSC protocol**. We identification and patched **7 production projects** within 24 hours of disclosure.
+                        Our team orchestrated an emergency response to a critical RCE in the <strong>Next.js RSC protocol</strong>. We identification and patched <strong>7 production projects</strong> within 24 hours of disclosure.
                     </p>
                     <div class="bg-black/30 p-4 rounded-xl text-[11px] font-mono">
                         <div class="text-dracula-orange"># Severity: 10.0 (Critical)</div>
@@ -382,7 +445,7 @@
                 <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-green">
                     <h3 class="text-xl font-bold dracula-green mb-4">Zero Trust Networking</h3>
                     <p class="opacity-80 mb-6 text-sm leading-relaxed">
-                        We eliminated public SSH ports by implementing **Tailscale**. Servers are now effectively invisible to the public internet, requiring identity-based SSO for access.
+                        We eliminated public SSH ports by implementing <strong>Tailscale</strong>. Servers are now effectively invisible to the public internet, requiring identity-based SSO for access.
                     </p>
                     <div class="flex gap-4">
                         <div class="bg-white/5 p-3 rounded-lg text-center flex-1">
@@ -403,16 +466,16 @@
             <div class="grid md:grid-cols-2 gap-16 items-center">
                 <div class="order-2 md:order-1">
                     <div class="bg-black/50 p-3 rounded-2xl border border-white/10 shadow-2xl overflow-hidden relative">
-                        <img src="https://raw.githubusercontent.com/amir20/dozzle/master/docs/demo.gif" alt="Dozzle Demo" class="rounded-lg opacity-80">
+                        <img src="dozzle_screenshot.png" alt="Dozzle Screenshot" class="rounded-lg opacity-80">
                         <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                            <div class="text-[10px] font-bold uppercase tracking-widest dracula-cyan">Live Log Streaming</div>
+                            <div class="text-[10px] font-bold uppercase tracking-widest dracula-cyan">Static Dashboard View</div>
                         </div>
                     </div>
                 </div>
                 <div class="order-1 md:order-2">
                     <h2 class="text-4xl font-black mb-6 dracula-orange">Observability: Dozzle</h2>
                     <p class="text-lg opacity-80 mb-8 leading-relaxed">
-                        Implemented **Dozzle** for lightweight, real-time log monitoring. It provides our team with instant visibility into container health with nearly zero resource overhead.
+                        Implemented <strong>Dozzle</strong> for lightweight, real-time log monitoring. It provides our team with instant visibility into container health with nearly zero resource overhead.
                     </p>
                     <div class="space-y-4">
                         <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
@@ -437,6 +500,7 @@
             
             <div class="section-card p-10 rounded-3xl">
                 <div class="mermaid flex justify-center">
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#bd93f9', 'lineColor': '#8be9fd', 'secondaryColor': '#50fa7b', 'tertiaryColor': '#ff79c6'}}}%%
 graph LR
     subgraph Dev [Developer Space]
     A[Code Commit] --> B[GitHub Actions]
@@ -449,9 +513,11 @@ graph LR
     D -.->|Logs| F[Dozzle]
     end
 
-    style B fill:#24292e,color:#fff
-    style C fill:#442222,stroke:#f00
-    style D fill:#224422,stroke:#0f0
+    style B fill:#bd93f9,color:#282a36,stroke:#bd93f9
+    style C fill:#ff5555,color:#fff,stroke:#ff5555
+    style D fill:#50fa7b,color:#282a36,stroke:#50fa7b
+    style E fill:#ffb86c,color:#282a36,stroke:#ffb86c
+    style F fill:#8be9fd,color:#282a36,stroke:#8be9fd
                 </div>
                 <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">Dockerized</div>
@@ -508,11 +574,18 @@ graph LR
                             <i class="fas fa-hdd mr-3"></i> The MinIO Advantage
                         </h4>
                         <ul class="space-y-3 text-sm opacity-80">
-                            <li>• **Immutability:** WORM locking prevents ransomware.</li>
-                            <li>• **Decoupled:** Scale storage independently of compute.</li>
-                            <li>• **High Availability:** Erasure coding for data durability.</li>
+                            <li>• <strong>Immutability:</strong> WORM locking prevents ransomware.</li>
+                            <li>• <strong>Decoupled:</strong> Scale storage independently of compute.</li>
+                            <li>• <strong>High Availability:</strong> Erasure coding for data durability.</li>
                         </ul>
                     </div>
+                    
+                    <div class="flex items-center gap-4 px-8 opacity-40">
+                        <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dracula-green to-transparent"></div>
+                        <i class="fas fa-arrow-down text-xs dracula-green"></i>
+                        <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dracula-green to-transparent"></div>
+                    </div>
+
                     <div class="bg-black/30 p-8 rounded-3xl border border-white/5 font-mono text-xs">
                         <div class="dracula-orange mb-4"># Incremental Logic (Bash)</div>
                         <div class="text-white">rsync -avz --link-dest=../latest /src/ /dest/snap-$(date +%F)/</div>
@@ -587,11 +660,11 @@ graph LR
                 </div>
                 
                 <div class="relative" data-aos="fade-left" data-aos-delay="400">
-                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/30 font-black border-4 border-[#282a36]">
-                        <i class="fas fa-rocket text-xs"></i>
+                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-cyan flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
+                        <i class="fas fa-layer-group text-xs"></i>
                     </div>
-                    <h4 class="text-xl font-bold opacity-30 uppercase">Phase 3: Multi-Region</h4>
-                    <p class="opacity-30 mt-2 text-sm">Automated regional failover and geographic replication.</p>
+                    <h4 class="text-xl font-bold dracula-cyan uppercase">Phase 3: Multi-Region</h4>
+                    <p class="opacity-60 mt-2 text-sm">Automated regional failover and geographic replication.</p>
                 </div>
             </div>
         </section>
@@ -663,7 +736,7 @@ graph LR
                     await addLog('GHA: Building Docker Image...', 'dracula-orange', 1500);
                     await addLog('GHA: Pushing to SDC Registry...', '', 1000);
                     await addLog('GHA: Executing Remote Deploy...', 'dracula-cyan', 1200);
-                    await addLog('<span class="dracula-green font-bold">🚀 SYSTEM ONLINE & SECURE</span>', 'text-xl', 800);
+                    await addLog('<span class="dracula-green font-bold tracking-tighter uppercase">SYSTEM FUNCTIONAL & SECURE</span>', 'text-lg', 800);
                     isRunning.value = false;
                 };
 
@@ -699,7 +772,43 @@ graph LR
         backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
         // Mermaid
-        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'base',
+            themeVariables: {
+                darkMode: true,
+                background: 'transparent',
+                mainBkg: '#383a59',
+                nodeBorder: '#bd93f9',
+                lineColor: '#f8f8f2',
+                primaryColor: '#bd93f9',
+                secondaryColor: '#50fa7b',
+                tertiaryColor: '#ff79c6'
+            }
+        });
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("scroll-progress").style.width = scrolled + "%";
+        });
+
+        // Copy Code Buttons
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.style.position = 'relative';
+            const button = document.createElement('button');
+            button.className = 'copy-btn';
+            button.innerText = 'Copy';
+            button.onclick = () => {
+                const code = block.querySelector('pre').innerText;
+                navigator.clipboard.writeText(code);
+                button.innerText = 'Copied!';
+                setTimeout(() => button.innerText = 'Copy', 2000);
+            };
+            block.appendChild(button);
+        });
     </script>
 </body>
 </html>
