@@ -179,18 +179,25 @@ We eliminated public attack surfaces using **Tailscale (WireGuard protocol)**.
 
 </div>
 
-<div class="bg-black/30 p-4 rounded text-sm font-mono">
-
-# Firewall Rules (UFW)
+<div class="bg-black/40 rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+<div class="bg-white/5 px-4 py-2 border-b border-white/10 flex gap-1.5">
+  <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+  <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+  <div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+</div>
+<div class="p-4 text-xs font-mono">
+<div class="text-green-400 mb-2">$ sudo ufw status</div>
+<pre class="text-gray-300">
 Status: active
 
 To           Action      From
 --           ------      ----
-22/tcp       DENY IN     Anywhere
-443/tcp      ALLOW IN    Anywhere
-41641/udp    ALLOW IN    Anywhere
-
-# Server is invisible to scanners.
+22/tcp       <span class="text-red-400 font-bold">DENY IN</span>     Anywhere
+443/tcp      <span class="text-green-400">ALLOW IN</span>    Anywhere
+41641/udp    <span class="text-green-400">ALLOW IN</span>    Anywhere
+</pre>
+<div class="mt-4 text-[10px] opacity-40 italic text-center"># Infrastructure is invisible to external port scanners</div>
+</div>
 </div>
 
 </div>
