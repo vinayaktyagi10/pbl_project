@@ -3,49 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PBL Semester 4 - SDC Infrastructure DevOps Project by Vinayak Tyagi under the guidance of Dr. Dibakar Sinha. Automated CI/CD, Zero Trust Security, and Cloud-Native Architecture.">
-    <meta name="keywords" content="PBL, Project Based Learning, DevOps, CI/CD, Docker, Security, Vinayak Tyagi, Dr. Dibakar Sinha, SDC, Infrastructure Automation">
-    <meta name="author" content="Vinayak Tyagi - SDC DevOps Team">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="PBL Project | SDC Infrastructure - Vinayak Tyagi">
-    <meta property="og:description" content="Resilient infrastructure automation PBL project by Vinayak Tyagi under the guidance of Dr. Dibakar Sinha.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="sdc_logo.jpg">
-    
     <title>PBL Project | SDC Infrastructure - Vinayak Tyagi</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
-    
-    <!-- External Resources -->
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
         :root {
-            --bg-primary: #282a36;
-            --bg-secondary: #383a59;
-            --bg-terminal: #1e1f29;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #141419;
+            --bg-card: #1a1a24;
+            --bg-terminal: #0d0d12;
             --accent-purple: #bd93f9;
             --accent-green: #50fa7b;
             --accent-pink: #ff79c6;
             --accent-orange: #ffb86c;
             --accent-red: #ff5555;
             --accent-cyan: #8be9fd;
+            --accent-yellow: #f1fa8c;
             --text-primary: #f8f8f2;
+            --text-secondary: #a0a0ab;
+            --glow-purple: rgba(189, 147, 249, 0.4);
+            --glow-cyan: rgba(139, 233, 253, 0.4);
+            --glow-pink: rgba(255, 121, 198, 0.4);
         }
-        
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-card: #ffffff;
+            --bg-terminal: #f5f5f7;
+            --accent-purple: #7c3aed;
+            --accent-green: #10b981;
+            --accent-pink: #ec4899;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-yellow: #eab308;
+            --text-primary: #1a1a1f;
+            --text-secondary: #6b7280;
+            --glow-purple: rgba(124, 58, 237, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+            --glow-pink: rgba(236, 72, 153, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
         }
+
+        /* Mermaid Pulse */
+        .mermaid svg {
+            filter: drop-shadow(0 0 10px rgba(189, 147, 249, 0.2));
+            animation: diagram-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes diagram-pulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(189, 147, 249, 0.2)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 25px rgba(139, 233, 253, 0.4)); transform: scale(1.01); }
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .loader-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            animation: loading 1.5s ease-in-out;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, var(--glow-purple) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--glow-cyan) 0%, transparent 50%),
+                radial-gradient(circle at 40% 90%, var(--glow-pink) 0%, transparent 50%);
+            opacity: 0.15;
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(5%, -5%) scale(1.1); }
+            66% { transform: translate(-5%, 5%) scale(0.95); }
+        }
+
+        h1, h2, h3 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 8s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .glass-card {
+            background: rgba(26, 26, 36, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow:
+                0 8px 32px 0 rgba(0, 0, 0, 0.37),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        [data-theme="light"] .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow:
+                0 8px 32px 0 rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transition: left 0.7s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(189, 147, 249, 0.3);
+            box-shadow:
+                0 24px 48px 0 rgba(189, 147, 249, 0.2),
+                0 0 80px 0 rgba(189, 147, 249, 0.15),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .card-tilt {
+            transition: transform 0.3s ease;
+        }
+
+        nav {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="light"] nav {
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .nav-link:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            color: var(--accent-cyan);
+        }
+
+        .nav-link.active {
+            color: var(--accent-cyan);
+        }
+
+        .nav-link.active::before {
+            opacity: 0.15;
+        }
+
+        .theme-toggle {
+            width: 56px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        [data-theme="light"] .theme-toggle-slider {
+            transform: translateX(28px);
+        }
+
+        .status-pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 12px;
+            position: relative;
+        }
+
+        .status-pulse::before,
+        .status-pulse::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green)
+            inset: -4px;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .status-pulse::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan));
+            z-index: 100;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(189, 147, 249, 0.4);
+            z-index: 50;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 12px 32px rgba(189, 147, 249, 0.6);
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 7rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+            font-weight: 800;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00c1;
+            clip-path: inset(45% 0 45% 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+            animation: glitch-anim2 1s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: inset(10% 0 30% 0); transform: translate(-2px, 2px); }
+            10% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
+            20% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+            30% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+            40% { clip-path: inset(15% 0 70% 0); transform: translate(-2px, 2px); }
+            50% { clip-path: inset(50% 0 20% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(20% 0 40% 0); transform: translate(-2px, 2px); }
+            70% { clip-path: inset(35% 0 15% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 2px); }
+            90% { clip-path: inset(65% 0 5% 0); transform: translate(2px, -2px); }
+            100% { clip-path: inset(10% 0 20% 0); transform: translate(-2px, 2px); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip-path: inset(25% 0 58% 0); transform: translate(2px, -2px); }
+            20% { clip-path: inset(75% 0 5% 0); transform: translate(-2px, 2px); }
+            40% { clip-path: inset(10% 0 80% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(40% 0 45% 0); transform: translate(-2px, 2px); }
+            80% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -2px); }
+            100% { clip-path: inset(5% 0 65% 0); transform: translate(-2px, 2px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            animation: revealIn 0.8s ease-out forwards;
+        }
+
+        @keyframes revealIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
 
         .dracula-accent { color: var(--accent-purple); }
         .dracula-green { color: var(--accent-green); }
@@ -53,454 +483,439 @@
         .dracula-orange { color: var(--accent-orange); }
         .dracula-red { color: var(--accent-red); }
         .dracula-cyan { color: var(--accent-cyan); }
-        .bg-dracula-green { background-color: var(--accent-green); }
 
-        .terminal {
-            background-color: var(--bg-terminal);
-            border-radius: 0.75rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            font-family: 'Fira Code', monospace;
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        .section-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 10px;
         }
-
-        .section-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(189, 147, 249, 0.6);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple));
         }
-
-        .nav-link {
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-purple);
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after { width: 100%; }
-
-        .tech-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
-        }
-        .tech-pill:hover {
-            background: rgba(189, 147, 249, 0.1);
-            border-color: var(--accent-purple);
-            transform: scale(1.05);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: #44475a; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
-
-        .mermaid { 
-            background: rgba(0,0,0,0.2); 
-            padding: 2rem; 
-            border-radius: 1.5rem; 
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* Scroll Progress Bar */
-        #scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(to right, var(--accent-pink), var(--accent-purple));
-            z-index: 100;
-            transition: width 0.1s ease-out;
-        }
-
-        /* Status Pulse */
-        .status-pulse {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 0 0 rgba(80, 250, 123, 0.7);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(80, 250, 123, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(80, 250, 123, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(80, 250, 123, 0); }
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 4px;
-            color: var(--accent-cyan);
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            opacity: 0;
-        }
-        .code-block:hover .copy-btn { opacity: 1; }
-        .copy-btn:hover { background: var(--accent-cyan); color: var(--bg-primary); }
 
         .mobile-menu {
             transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
         }
+
+        [data-theme="light"] .mobile-menu {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
         .mobile-menu.active {
             transform: translateX(0);
         }
 
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 40;
-        }
-        .back-to-top.visible {
-            opacity: 1;
-            pointer-events: auto;
+        .terminal {
+            background: var(--bg-terminal);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .code-block {
-            background: #1e1f29;
-            border-left: 4px solid var(--accent-cyan);
+            background: var(--bg-terminal);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             padding: 1rem;
-            border-radius: 0.5rem;
-            font-family: 'Fira Code', monospace;
+            position: relative;
+        }
+
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
-            overflow-x: auto;
+            transition: all 0.3s;
+        }
+
+        .tech-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: var(--accent-cyan);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: clamp(2rem, 12vw, 4rem);
+            }
         }
     </style>
 </head>
-<body class="leading-relaxed">
-    <div id="scroll-progress"></div>
-
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-[#282a36]/95 backdrop-blur-xl border-b border-white/5 py-4 px-8" role="navigation" aria-label="Main navigation">
-        <div class="flex justify-between items-center max-w-7xl mx-auto">
-            <div class="flex items-center gap-4">
-                <img src="sdc_logo.jpg" alt="SDC Infrastructure Logo" class="h-10 w-10 rounded-lg" loading="eager">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <div class="font-bold dracula-cyan leading-none uppercase">PBL Semester 4</div>
-                        <div class="px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center">
-                            <span class="status-pulse"></span>
-                            <span class="text-[7px] font-black text-green-400 uppercase tracking-tighter">Operational</span>
-                        </div>
-                    </div>
-                    <div class="text-[9px] uppercase tracking-widest opacity-50 font-black">Project Based Learning</div>
-                </div>
-            </div>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden lg:flex gap-8 text-[10px] font-bold uppercase tracking-widest">
-                <a href="./slides" class="nav-link dracula-pink">Presentation</a>
-                <a href="#pipeline" class="nav-link">Pipeline</a>
-                <a href="#security" class="nav-link">Security</a>
-                <a href="#monitoring" class="nav-link">Monitoring</a>
-                <a href="#infrastructure" class="nav-link">Infrastructure</a>
-                <a href="#storage" class="nav-link">Storage</a>
-                <a href="#automation" class="nav-link">Automation</a>
-                <a href="#roadmap" class="nav-link">Roadmap</a>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="lg:hidden text-2xl dracula-cyan" aria-label="Toggle mobile menu" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-[#282a36] border-l border-white/10 z-50 lg:hidden" role="navigation" aria-label="Mobile navigation">
-        <div class="p-6">
-            <button id="close-menu-btn" class="text-2xl dracula-pink mb-8 float-right" aria-label="Close mobile menu">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="clear-both pt-8 space-y-6 text-sm font-bold uppercase tracking-widest">
-                <a href="./slides" class="block nav-link mobile-nav-link dracula-pink">Presentation</a>
-                <a href="#pipeline" class="block nav-link mobile-nav-link">Pipeline</a>
-                <a href="#security" class="block nav-link mobile-nav-link">Security</a>
-                <a href="#monitoring" class="block nav-link mobile-nav-link">Monitoring</a>
-                <a href="#infrastructure" class="block nav-link mobile-nav-link">Infrastructure</a>
-                <a href="#storage" class="block nav-link mobile-nav-link">Storage</a>
-                <a href="#automation" class="block nav-link mobile-nav-link">Automation</a>
-                <a href="#roadmap" class="block nav-link mobile-nav-link">Roadmap</a>
+<body>
+    <div class="page-loader">
+        <div class="loader-content text-center">
+            <div class="text-2xl font-bold text-gradient mb-2">SDC Infrastructure</div>
+            <div class="text-sm text-gray-500">Loading System</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
             </div>
         </div>
     </div>
 
-    <!-- Hero -->
-    <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
-                 alt="Technology background"
-                 class="w-full h-full object-cover opacity-20 scale-110"
-                 loading="eager">
-            <div class="absolute inset-0 bg-gradient-to-b from-[#282a36]/0 via-[#282a36]/50 to-[#282a36]"></div>
-        </div>
-        
-        <div class="relative z-10 text-center px-4 py-20" data-aos="zoom-out">
-            <div class="inline-block px-4 py-1 rounded-full border border-dracula-accent/30 bg-dracula-accent/10 text-dracula-accent text-xs font-bold uppercase tracking-widest mb-6">
-                Project Based Learning | SDC Infrastructure
+    <canvas id="particles-canvas"></canvas>
+    <div id="scroll-progress"></div>
+
+    <nav class="fixed top-0 w-full z-50 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3 group">
+                <img src="sdc_logo.jpg" alt="SDC Logo" class="h-10 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg transition-all">
+                <span class="font-bold text-xl hidden md:block">
+                    <span class="text-gradient">SDC</span> Infrastructure
+                </span>
+            </a>
+
+            <div class="hidden md:flex gap-2 items-center">
+                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mr-4">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-green-500 uppercase tracking-widest">System: Operational</span>
+                </div>
+                <a href="#overview" class="nav-link">Overview</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#security" class="nav-link">Security</a>
+                <a href="#results" class="nav-link">Results</a>
+                <a href="#roadmap" class="nav-link">Roadmap</a>
+
+                <div class="theme-toggle ml-4" id="theme-toggle">
+                    <div class="theme-toggle-slider">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </div>
             </div>
-            <h1 class="text-5xl md:text-8xl font-black mb-6 dracula-cyan tracking-tighter uppercase">Resilient By Design</h1>
-            <p class="text-xl md:text-2xl opacity-80 mb-8 font-medium max-w-2xl mx-auto">
-                Scaling reliability and security through automated delivery and kernel-level governance.
-            </p>
-            <p class="text-sm md:text-base opacity-60 mb-8 font-medium max-w-xl mx-auto">
-                A PBL Project by <span class="dracula-pink font-bold">Vinayak Tyagi</span> (DevOps Team)
-            </p>
-            <p class="text-xs opacity-50 italic mb-12">
-                Under the supervision of <span class="dracula-cyan font-bold">Dr. Dibakar Sinha</span>
-            </p>
-            <div class="flex flex-col md:flex-row justify-center gap-6 items-center flex-wrap">
-                <a href="./slides" class="flex items-center gap-3 bg-dracula-pink/20 hover:bg-dracula-pink/30 px-8 py-4 rounded-2xl border border-dracula-pink/50 transition-all group">
-                    <div class="w-10 h-10 rounded-full bg-dracula-pink/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-play dracula-pink"></i>
+
+            <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                <i class="fas fa-bars text-cyan-400"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 z-50 p-6 border-l border-white/10">
+        <button id="close-menu-btn" class="absolute top-6 right-6 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+            <i class="fas fa-times text-cyan-400"></i>
+        </button>
+        <div class="flex flex-col gap-4 mt-16">
+            <a href="#overview" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Overview</a>
+            <a href="#architecture" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Architecture</a>
+            <a href="#security" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Security</a>
+            <a href="#results" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Results</a>
+            <a href="#roadmap" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Roadmap</a>
+            <div class="mt-8 flex items-center gap-3">
+                <span class="text-sm">Theme</span>
+                <div class="theme-toggle" id="mobile-theme-toggle">
+                    <div class="theme-toggle-slider">
+                        <i class="fas fa-moon"></i>
                     </div>
-                    <div class="text-left">
-                        <div class="text-xs opacity-50 font-bold uppercase">Open Slides</div>
-                        <div class="font-bold">View Full Presentation</div>
-                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-30">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full filter blur-[128px] animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/30 rounded-full filter blur-[128px] animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <div class="flex justify-center items-center gap-8 mb-12 reveal stagger-1">
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    <img src="sdc_logo.jpg" alt="SDC Infrastructure" class="relative h-24 w-auto rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl transition-all duration-500">
+                </div>
+                <div class="h-12 w-px bg-white/10 hidden md:block"></div>
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur-xl opacity-10 group-hover:opacity-30 transition-opacity"></div>
+                    <img src="muj_logo.png" alt="MUJ Logo" class="relative h-16 w-auto rounded-xl border border-black/10 dark:border-white/10 shadow-xl transition-all duration-500 bg-white p-2">
+                </div>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 reveal stagger-1">
+                <span class="status-pulse"></span>
+                <span class="text-sm font-mono text-green-400">PBL Semester 4 • 2026</span>
+            </div>
+
+            <h1 class="hero-title mb-6 reveal stagger-2">
+                <span class="text-gradient glitch" data-text="Resilient">Resilient</span><br/>
+                Infrastructure
+            </h1>
+
+            <p class="hero-subtitle text-gray-400 mb-4 max-w-3xl mx-auto reveal stagger-3">
+                Automated Disaster Recovery & Self-Healing Systems
+            </p>
+
+            <p class="text-sm text-gray-500 mb-12 reveal stagger-4">
+                Under the guidance of <span class="text-purple-400 font-semibold">Dr. Dibakar Sinha</span>
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 mb-16 reveal stagger-5">
+                <a href="#overview" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 font-semibold hover:shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-105">
+                    Explore Project
                 </a>
-                <div class="flex items-center gap-3 bg-white/5 px-6 py-3 rounded-2xl border border-white/10">
-                    <div class="w-10 h-10 rounded-full bg-dracula-pink/20 flex items-center justify-center">
-                        <i class="fas fa-users dracula-pink"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-xs opacity-50 font-bold uppercase">Role</div>
-                        <div class="font-bold">DevOps Team Member</div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 bg-white/5 px-6 py-3 rounded-2xl border border-white/10">
-                    <div class="w-10 h-10 rounded-full bg-dracula-green/20 flex items-center justify-center">
-                        <i class="fas fa-graduation-cap dracula-green"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-xs opacity-50 font-bold uppercase">Academic</div>
-                        <div class="font-bold">Semester 4, 2026</div>
-                    </div>
-                </div>
+                <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 font-semibold hover:bg-white/10 transition-all hover:scale-105">
+                    <i class="fab fa-github mr-2"></i>View Code
+                </a>
+            </div>
+
+            <div class="text-xs text-gray-600 font-mono reveal stagger-5">
+                <i class="fas fa-user mr-2"></i>Vinayak Tyagi (2427030346)
             </div>
         </div>
-    </header>
+    </section>
 
-    <main id="main-content" class="max-w-6xl mx-auto px-6 py-20 space-y-48">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-16 space-y-32">
 
-        <!-- Overview Section -->
-        <section data-aos="fade-up">
+        <!-- Project Overview -->
+        <section id="overview" data-aos="fade-up">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-6 dracula-accent">PBL Project Overview</h2>
-                <p class="text-lg opacity-70 max-w-3xl mx-auto leading-relaxed">
-                    This Project Based Learning initiative focused on transforming a manual, fragile infrastructure into a self-healing, automated system. 
-                    As a member of the DevOps team, I focused on implementing robust CI/CD, proactive security, and high-efficiency storage solutions.
+                <h2 class="text-5xl md:text-6xl font-bold mb-4">
+                    <span class="text-gradient">Project Overview</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Engineering a self-healing infrastructure capable of surviving catastrophic failures
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <div class="section-card p-8 rounded-3xl text-center">
-                    <div class="text-5xl mb-4">🎯</div>
-                    <h3 class="text-xl font-bold dracula-cyan mb-3">Objective</h3>
-                    <p class="text-sm opacity-70 leading-relaxed">
-                        Eliminate manual failure points and establish a governance model for containerized workloads.
-                    </p>
-                </div>
-                <div class="section-card p-8 rounded-3xl text-center">
-                    <div class="text-5xl mb-4">🔧</div>
-                    <h3 class="text-xl font-bold dracula-green mb-3">DevOps Approach</h3>
-                    <p class="text-sm opacity-70 leading-relaxed">
-                        Utilizing Docker, GitHub Actions, and Zero Trust networking to ensure 99.9% availability.
-                    </p>
-                </div>
-                <div class="section-card p-8 rounded-3xl text-center">
-                    <div class="text-5xl mb-4">📊</div>
-                    <h3 class="text-xl font-bold dracula-pink mb-3">Metrics</h3>
-                    <p class="text-sm opacity-70 leading-relaxed">
-                        Achieved a 48x faster RTO and 24x better RPO through automated recovery and snapshots.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Tech Stack -->
-            <div class="section-card p-10 rounded-3xl">
-                <h3 class="text-2xl font-black mb-8 dracula-cyan text-center uppercase">DevOps Toolbox</h3>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <div class="tech-pill p-4 rounded-xl text-center">
-                        <i class="fab fa-docker text-3xl mb-2 dracula-cyan"></i>
-                        <h4 class="text-xs font-bold uppercase">Docker</h4>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card card-tilt p-8" data-aos="fade-right" data-tilt>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-6 float-animation">
+                        <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
                     </div>
-                    <div class="tech-pill p-4 rounded-xl text-center">
-                        <i class="fab fa-github text-3xl mb-2 dracula-pink"></i>
-                        <h4 class="text-xs font-bold uppercase">GHA</h4>
-                    </div>
-                    <div class="tech-pill p-4 rounded-xl text-center">
-                        <i class="fas fa-network-wired text-3xl mb-2 dracula-green"></i>
-                        <h4 class="text-xs font-bold uppercase">Tailscale</h4>
-                    </div>
-                    <div class="tech-pill p-4 rounded-xl text-center">
-                        <i class="fas fa-database text-3xl mb-2 dracula-orange"></i>
-                        <h4 class="text-xs font-bold uppercase">MinIO</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pipeline Section -->
-        <section id="pipeline" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-cyan">Automated Delivery Pipeline</h2>
-                <p class="opacity-60 text-lg">Replacing manual deployments with a robust CI/CD workflow</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div>
-                    <h3 class="text-2xl font-black mb-6">Continuous Integration</h3>
-                    <p class="text-lg opacity-80 mb-6 leading-relaxed">
-                        Our team engineered a GitOps-inspired pipeline using **GitHub Actions** that automates everything from linting to container orchestration.
-                    </p>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start text-sm opacity-70">
-                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
-                            <span><strong>Multi-stage builds</strong> to optimize image size and security.</span>
+                    <h3 class="text-3xl font-bold mb-4 dracula-red">The "Before" State</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span><strong>Fragile:</strong> Manual backups prone to human error</span>
                         </li>
-                        <li class="flex items-start text-sm opacity-70">
-                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
-                            <span><strong>Automated vulnerability scans</strong> integrated directly into the PR flow.</span>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span><strong>Insecure:</strong> Publicly exposed SSH ports</span>
                         </li>
-                        <li class="flex items-start text-sm opacity-70">
-                            <i class="fas fa-check-circle mt-1 mr-3 dracula-green"></i>
-                            <span><strong>Zero-downtime restarts</strong> on production servers via SSH runners.</span>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span><strong>Unstable:</strong> No resource limits or constraints</span>
                         </li>
                     </ul>
                 </div>
-                
-                <div class="terminal overflow-hidden" id="terminal-sim">
-                    <div class="bg-[#44475a]/30 px-4 py-2 flex justify-between items-center border-b border-white/5">
-                        <div class="flex gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        </div>
-                        <div class="text-[9px] uppercase font-bold opacity-40 tracking-widest">GHA Runner Simulation</div>
+
+                <div class="glass-card card-tilt p-8" data-aos="fade-left" data-tilt>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mb-6 float-animation" style="animation-delay: 0.5s;">
+                        <i class="fas fa-shield text-2xl text-white"></i>
                     </div>
-                    <div class="p-6 h-[320px] overflow-y-auto text-[11px] font-mono">
-                        <div v-for="log in logs" :key="log.id" :class="log.type" class="mb-1">
-                            <span class="opacity-30 mr-2">[{{ log.time }}]</span>
-                            <span v-html="log.text"></span>
+                    <h3 class="text-3xl font-bold mb-4 dracula-green">The "After" State</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>Resilient:</strong> Automated incremental snapshots</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>Secure:</strong> Zero Trust Mesh Network</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>Governed:</strong> Kernel-level CPU/RAM constraints</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Role -->
+        <section id="role" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
+                Team Role & <span class="text-gradient">Mandate</span>
+            </h2>
+
+            <p class="text-xl text-gray-400 text-center mb-12 max-w-3xl mx-auto">
+                As a <span class="text-cyan-400 font-semibold">DevOps Engineer</span>, I led the reliability, security, and delivery layers
+            </p>
+
+            <div class="bento-grid">
+                <div class="bento-card" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-xl text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 dracula-cyan">Automation & CI/CD</h4>
+                    <p class="text-gray-400 text-sm">Designed GitHub Actions pipelines to build and push images to self-hosted Docker registry</p>
+                </div>
+
+                <div class="bento-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-database text-xl text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 dracula-accent">Storage & Backups</h4>
+                    <p class="text-gray-400 text-sm">Orchestrated transition to MinIO S3 and designed rsync snapshot logic</p>
+                </div>
+
+                <div class="bento-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-lock text-xl text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 dracula-green">Security</h4>
+                    <p class="text-gray-400 text-sm">Configured Tailscale ACLs to enforce Zero Trust and patched critical CVEs</p>
+                </div>
+
+                <div class="bento-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-xl text-white"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2 dracula-orange">Observability</h4>
+                    <p class="text-gray-400 text-sm">Deployed Dozzle for real-time log streaming and container health monitoring</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Incident -->
+        <section id="incident" data-aos="fade-up">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center gap-3 mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center animate-pulse">
+                            <i class="fas fa-bolt text-3xl text-white"></i>
                         </div>
-                        <div v-if="isRunning" class="inline-block w-2 h-4 bg-dracula-green animate-pulse ml-1 align-middle"></div>
-                        <div v-if="!isRunning" class="mt-4">
-                            <button @click="runSimulation" class="bg-dracula-green/20 hover:bg-dracula-green/30 text-dracula-green border border-dracula-green/50 px-4 py-1 rounded text-[10px] font-bold uppercase transition-all">
-                                Trigger Build
-                            </button>
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                        The <span class="text-gradient">Incident</span>
+                    </h2>
+                    <p class="text-2xl dracula-red font-semibold">"Black Swan Event"</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 dracula-orange">The Trigger</h3>
+                        <p class="text-gray-400 mb-6">A malware container was deployed with unconstrained resources</p>
+
+                        <h3 class="text-2xl font-bold mb-6 dracula-red">The Impact</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span class="text-gray-400"><strong class="text-red-400">900% CPU Usage</strong> (Resource Exhaustion)</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span class="text-gray-400"><strong class="text-red-400">Hard Shutdown</strong> by Cloud Provider</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span class="text-gray-400"><strong class="text-red-400">58 Minutes</strong> of Downtime</span>
+                            </div>
                         </div>
+
+                        <button id="open-postmortem" class="mt-8 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all flex items-center gap-2 group">
+                            <i class="fas fa-file-medical text-red-400 group-hover:scale-110 transition-transform"></i>
+                            View Detailed Post-Mortem
+                        </button>
+                    </div>
+
+                    <div class="code-block">
+                        <pre class="text-xs md:text-sm text-gray-300 overflow-x-auto"><code><span class="dracula-pink">participant</span> A <span class="dracula-cyan">as</span> Attacker/Bug
+<span class="dracula-pink">participant</span> S <span class="dracula-cyan">as</span> Server
+<span class="dracula-pink">participant</span> C <span class="dracula-cyan">as</span> Cloud Provider
+
+A<span class="dracula-orange">->></span>S: Deploy Malicious Container
+<span class="dracula-green">Note over</span> S: CPU Spikes to 300%
+<span class="dracula-green">Note over</span> S: RAM Full (OOM)
+S<span class="dracula-orange">->></span>S: Unresponsive
+C<span class="dracula-orange">->></span>S: <span class="dracula-red">HARD KILL</span> (SLA Violation)
+<span class="dracula-green">Note over</span> S: <span class="dracula-red">DOWNTIME START</span></code></pre>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Security Section -->
-        <section id="security" data-aos="fade-up">
+        <!-- Post-Mortem Modal -->
+        <div id="postmortem-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-500">
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-md" id="close-modal-overlay"></div>
+            <div class="glass-card w-full max-w-3xl max-h-[80vh] overflow-hidden relative z-10 flex flex-col scale-95 transition-transform duration-500">
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                            <i class="fas fa-microscope text-red-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xl">Incident Report: #INC-2025-09</h3>
+                            <p class="text-xs text-gray-500 font-mono">CRITICAL • RESOURCE_EXHAUSTION • COMPLETED</p>
+                        </div>
+                    </div>
+                    <button id="close-postmortem" class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="p-8 overflow-y-auto space-y-8 custom-scrollbar">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-red-400 font-bold uppercase text-xs tracking-widest mb-4">Root Cause Analysis</h4>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                A legacy deployment script allowed the creation of containers without kernel-level <code class="text-xs bg-red-500/10 px-1 rounded text-red-300">cgroup</code> constraints. A compromised image executed a fork-bomb, causing the host OS to freeze and trigger a hardware-level shutdown by the cloud provider.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-black/40 border border-white/5">
+                            <h4 class="text-cyan-400 font-bold uppercase text-xs tracking-widest mb-4">The "Fix" (Patch)</h4>
+                            <div class="text-[10px] font-mono text-gray-500 space-y-1">
+                                <div class="text-green-400">+ deploy:</div>
+                                <div class="text-green-400">+   resources:</div>
+                                <div class="text-green-400">+     limits:</div>
+                                <div class="text-green-400">+       cpus: '0.50'</div>
+                                <div class="text-green-400">+       memory: 512M</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-purple-400 font-bold uppercase text-xs tracking-widest mb-4">Prevention Strategy</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                <i class="fas fa-shield-alt text-purple-400 mb-2"></i>
+                                <div class="text-xs font-bold">Admission Controller</div>
+                                <p class="text-[10px] text-gray-500 mt-1">Blocks any container missing resource tags</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                <i class="fas fa-heartbeat text-purple-400 mb-2"></i>
+                                <div class="text-xs font-bold">Auto-Scaling</div>
+                                <p class="text-[10px] text-gray-500 mt-1">Isolates high-load nodes automatically</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                <i class="fas fa-search-plus text-purple-400 mb-2"></i>
+                                <div class="text-xs font-bold">Deep Observability</div>
+                                <p class="text-[10px] text-gray-500 mt-1">Prometheus alerts for CPU > 80%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-white/10 bg-white/5 text-center">
+                    <p class="text-[10px] text-gray-600 font-mono italic">"Resilience is built one failure at a time."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <section id="architecture" data-aos="fade-up">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-pink">Zero Trust & Proactive Security</h2>
-                <p class="opacity-60 text-lg">Eliminating attack surfaces and managing critical vulnerabilities</p>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Architecture & <span class="text-gradient">Automated Delivery</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    From manual deployments to a GitOps-inspired CI/CD pipeline
+                </p>
             </div>
-            
-            <div class="grid md:grid-cols-2 gap-8 mb-16">
-                <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-red">
-                    <h3 class="text-xl font-bold dracula-red mb-4">Critical Patching: CVE-2025-66478</h3>
-                    <p class="opacity-80 mb-6 text-sm leading-relaxed">
-                        Our team orchestrated an emergency response to a critical RCE in the <strong>Next.js RSC protocol</strong>. We identified and patched <strong>7 production projects</strong> within 24 hours of disclosure.
-                    </p>
-                    <div class="bg-black/30 p-4 rounded-xl text-[11px] font-mono">
-                        <div class="text-dracula-orange"># Severity: 10.0 (Critical)</div>
-                        <div class="text-white/70">Action: Upgraded to Next.js v16.0.7+</div>
-                        <div class="text-dracula-green">Result: Zero exploitation detected</div>
-                    </div>
-                </div>
 
-                <div class="section-card p-10 rounded-3xl border-l-4 border-dracula-green">
-                    <h3 class="text-xl font-bold dracula-green mb-4">Zero Trust Networking</h3>
-                    <p class="opacity-80 mb-6 text-sm leading-relaxed">
-                        We eliminated public SSH ports by implementing <strong>Tailscale</strong>. Servers are now effectively invisible to the public internet, requiring identity-based SSO for access.
-                    </p>
-                    <div class="flex gap-4">
-                        <div class="bg-white/5 p-3 rounded-lg text-center flex-1">
-                            <i class="fas fa-ghost dracula-cyan mb-1"></i>
-                            <div class="text-[9px] font-bold uppercase opacity-50">Stealth Mode</div>
-                        </div>
-                        <div class="bg-white/5 p-3 rounded-lg text-center flex-1">
-                            <i class="fas fa-lock dracula-pink mb-1"></i>
-                            <div class="text-[9px] font-bold uppercase opacity-50">Identity MFA</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Monitoring Section -->
-        <section id="monitoring" data-aos="fade-up">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="order-2 md:order-1">
-                    <div class="bg-black/50 p-3 rounded-2xl border border-white/10 shadow-2xl overflow-hidden relative">
-                        <img src="dozzle_screenshot.png" alt="Dozzle Screenshot" class="rounded-lg opacity-100">
-                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
-                            <div class="text-[10px] font-bold uppercase tracking-widest dracula-cyan text-center">Dashboard Screenshot</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="order-1 md:order-2">
-                    <h2 class="text-4xl font-black mb-6 dracula-orange">Observability: Dozzle</h2>
-                    <p class="text-lg opacity-80 mb-8 leading-relaxed">
-                        Implemented <strong>Dozzle</strong> for lightweight, real-time log monitoring. It provides our team with instant visibility into container health with nearly zero resource overhead.
-                    </p>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
-                            <i class="fas fa-bolt dracula-orange text-xl"></i>
-                            <div class="text-sm">Instant logs without heavy indexing.</div>
-                        </div>
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
-                            <i class="fas fa-shield-alt dracula-green text-xl"></i>
-                            <div class="text-sm">Secure access via Tailscale VPN.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Infrastructure Architecture Section -->
-        <section id="infrastructure" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-cyan uppercase">System Architecture</h2>
-                <p class="opacity-60 text-lg">A visual breakdown of our automated delivery and storage layer</p>
-            </div>
-            
-            <div class="section-card p-10 rounded-3xl">
-                <div class="mermaid flex justify-center">
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#bd93f9', 'lineColor': '#8be9fd', 'secondaryColor': '#50fa7b', 'tertiaryColor': '#ff79c6'}}}%%
+            <div class="glass-card p-8">
+                <div class="mermaid">
 graph LR
     subgraph Dev [Developer Space]
     A[Code Commit] --> B[GitHub Actions]
@@ -519,154 +934,556 @@ graph LR
     style E fill:#ffb86c,color:#282a36,stroke:#ffb86c
     style F fill:#8be9fd,color:#282a36,stroke:#8be9fd
                 </div>
-                <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">Dockerized</div>
-                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">GitOps-Ready</div>
-                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">S3 Compliant</div>
-                    <div class="p-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase opacity-60">Self-Healing</div>
-                </div>
             </div>
         </section>
 
-        <!-- Storage & Backups -->
-        <section id="storage" data-aos="fade-up">
+        <!-- Security -->
+        <section id="security" data-aos="fade-up">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-green">Smart Storage Strategy</h2>
-                <p class="opacity-60 text-lg">Transitioning to MinIO Object Storage with Incremental Snapshots</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-12 items-stretch" id="storage-app">
-                <!-- Calculator Card -->
-                <div class="section-card p-12 rounded-[2.5rem] border-2 border-dracula-green/20 bg-[#282a36] shadow-2xl">
-                    <h3 class="text-2xl font-black mb-10 flex items-center">
-                        <i class="fas fa-calculator mr-4 dracula-green"></i> Storage ROI
-                    </h3>
-                    
-                    <div class="mb-12">
-                        <div class="flex justify-between mb-6">
-                            <label class="text-xs font-black dracula-cyan uppercase tracking-widest">Backup Retention</label>
-                            <span class="text-2xl font-black text-white bg-dracula-pink/20 px-4 py-1 rounded-xl">{{ days }} <span class="text-xs opacity-50 ml-1">Days</span></span>
-                        </div>
-                        <input type="range" v-model.number="days" min="1" max="365" 
-                               class="w-full h-4 bg-gray-700 rounded-full appearance-none cursor-pointer accent-dracula-pink border-4 border-[#282a36]">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-8 mb-10 text-center">
-                        <div class="p-4 rounded-xl bg-[#44475a]/50">
-                            <div class="text-[9px] uppercase font-black opacity-40 mb-1">Legacy Full</div>
-                            <div class="text-2xl font-black dracula-red">{{ totalSize }} GB</div>
-                        </div>
-                        <div class="p-4 rounded-xl bg-[#44475a]/50 border border-dracula-green/20">
-                            <div class="text-[9px] uppercase font-black opacity-40 mb-1">Team Snap</div>
-                            <div class="text-2xl font-black dracula-green">{{ savedSize }} GB</div>
-                        </div>
-                    </div>
-
-                    <div class="p-6 bg-dracula-green rounded-3xl text-center shadow-2xl transform hover:scale-[1.03] transition-all text-[#282a36]">
-                        <div class="text-[10px] uppercase font-black opacity-70 mb-1">Total Space Saved</div>
-                        <div class="text-4xl font-black">{{ (totalSize - savedSize).toFixed(0) }} GB</div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col justify-between space-y-8">
-                    <div class="section-card p-8 rounded-3xl">
-                        <h4 class="font-bold dracula-cyan mb-4 flex items-center uppercase tracking-widest text-xs">
-                            <i class="fas fa-hdd mr-3"></i> The MinIO Advantage
-                        </h4>
-                        <ul class="space-y-3 text-sm opacity-80">
-                            <li>• <strong>Immutability:</strong> WORM locking prevents ransomware.</li>
-                            <li>• <strong>Decoupled:</strong> Scale storage independently of compute.</li>
-                            <li>• <strong>High Availability:</strong> Erasure coding for data durability.</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="flex items-center gap-4 px-8 opacity-40">
-                        <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dracula-green to-transparent"></div>
-                        <i class="fas fa-arrow-down text-xs dracula-green"></i>
-                        <div class="h-px flex-1 bg-gradient-to-r from-transparent via-dracula-green to-transparent"></div>
-                    </div>
-
-                    <div class="bg-black/30 p-8 rounded-3xl border border-white/5 font-mono text-xs">
-                        <div class="dracula-orange mb-4"># Incremental Logic (Bash)</div>
-                        <div class="text-white">rsync -avz --link-dest=../latest /src/ /dest/snap-$(date +%F)/</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Automation Section -->
-        <section id="automation" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-accent">Governance & Automation</h2>
-                <p class="opacity-60 text-lg">Kernel-level constraints and self-healing systems</p>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-gradient">Zero Trust</span> Networking
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Eliminated public attack surfaces using Tailscale (WireGuard protocol)
+                </p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="section-card p-10 rounded-3xl">
-                    <h3 class="text-2xl font-black mb-6 dracula-orange uppercase tracking-tighter">Resource Governance</h3>
-                    <p class="text-sm opacity-80 mb-6">
-                        By applying Linux **cgroups** via Docker Compose, we ensured that no single container can take down the host.
-                    </p>
-                    <div class="code-block text-[11px]">
-<pre>deploy:
-  resources:
-    limits:
-      cpus: '0.50' # 50% CPU Cap
-      memory: 512M # OOM Guard</pre>
+                <div class="glass-card p-8" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6 dracula-cyan">Key Features</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-shield-virus text-cyan-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">No Public Ports</h4>
+                                <p class="text-sm text-gray-400">SSH port 22 is completely closed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-id-card text-cyan-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">Identity Based</h4>
+                                <p class="text-sm text-gray-400">Access controlled via SSO</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-network-wired text-cyan-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-1">NAT Traversal</h4>
+                                <p class="text-sm text-gray-400">Works seamlessly behind firewalls</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="section-card p-10 rounded-3xl">
-                    <h3 class="text-2xl font-black mb-6 dracula-cyan uppercase tracking-tighter">Reliability Metrics</h3>
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                            <span class="text-xs uppercase opacity-50 font-bold">Uptime</span>
-                            <span class="text-2xl font-black dracula-green">99.9%</span>
+
+                <div class="terminal p-6" data-aos="fade-left">
+                    <div class="flex gap-2 mb-4">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="text-green-400">$ sudo ufw status</div>
+                        <div class="text-gray-400">Status: active</div>
+                        <div class="mt-4 text-gray-400">
+                            <div>To           Action      From</div>
+                            <div>--           ------      ----</div>
+                            <div>22/tcp       <span class="text-red-400 font-bold">DENY IN</span>     Anywhere</div>
+                            <div>443/tcp      <span class="text-green-400">ALLOW IN</span>    Anywhere</div>
+                            <div>41641/udp    <span class="text-green-400">ALLOW IN</span>    Anywhere</div>
                         </div>
-                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                            <span class="text-xs uppercase opacity-50 font-bold">RPO (Recovery Point)</span>
-                            <span class="text-2xl font-black dracula-cyan">1 Hour</span>
-                        </div>
-                        <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                            <span class="text-xs uppercase opacity-50 font-bold">RTO (Recovery Time)</span>
-                            <span class="text-2xl font-black dracula-pink">< 5 Mins</span>
+                        <div class="mt-6 text-xs text-gray-600 italic text-center">
+                            # Infrastructure is invisible to external scanners
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Roadmap Section -->
+        <!-- CVE Security -->
+        <section data-aos="fade-up">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                        <span class="text-gradient">Proactive Security</span> Maintenance
+                    </h2>
+                    <p class="text-xl text-gray-400">Vulnerability Management (CVE-2025-66478)</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 dracula-red">Emergency Patching</h3>
+                        <div class="space-y-4 text-gray-400">
+                            <p><strong class="text-red-400">The Threat:</strong> Remote Code Execution (CVSS 10.0) via RSC protocol deserialization</p>
+                            <p><strong class="text-orange-400">Scope:</strong> 7 Projects identified as vulnerable across the organization</p>
+                            <p><strong class="text-green-400">Resolution:</strong> Upgraded Next.js to 16.0.7+ and rotated critical secrets</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 bg-red-900/10 border-red-500/30">
+                        <div class="text-xs font-mono text-red-400 mb-4">⚠ SECURITY ADVISORY</div>
+                        <p class="text-gray-300 italic mb-4">
+                            "Successfully exploiting this vulnerability allows attackers to execute system commands and access sensitive environment variables."
+                        </p>
+                        <div class="text-right text-sm text-gray-500">— Next.js Security Team</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Backups -->
+        <section data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Automated <span class="text-gradient">Incremental Backups</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Bash-based snapshot system using rsync hard-links
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="code-block" data-aos="fade-right">
+                    <button class="copy-btn">Copy</button>
+                    <pre class="text-sm text-gray-300 overflow-x-auto"><code><span class="dracula-pink"># The Core Logic</span>
+<span class="dracula-pink"># --link-dest creates hard links to PREVIOUS</span>
+<span class="dracula-pink"># 0% Storage use for unchanged files.</span>
+
+rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--delete</span> \
+  <span class="dracula-orange">--link-dest=</span>../latest \
+  /source/data/ \
+  /backups/snapshot-<span class="dracula-yellow">$(date +%F-%H%M)</span>/</code></pre>
+                </div>
+
+                <div id="storage-app" class="glass-card p-8" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-6 dracula-green">Projected Efficiency</h3>
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-400 mb-2">Days: {{ days }}</label>
+                        <input type="range" v-model="days" min="7" max="90" class="w-full">
+                    </div>
+                    <div class="space-y-4">
+                        <div class="stat-card">
+                            <div class="text-sm text-gray-400 mb-1">Traditional Approach</div>
+                            <div class="stat-number">{{ totalSize }}GB</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="text-sm text-gray-400 mb-1">With Hard Links</div>
+                            <div class="stat-number text-green-400">{{ savedSize }}GB</div>
+                        </div>
+                        <div class="text-center text-green-400 font-bold text-xl">
+                            {{ Math.round((1 - savedSize / totalSize) * 100) }}% Saved
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Observability -->
+        <section data-aos="fade-up">
+            <div class="glass-card p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                        Real-Time <span class="text-gradient">Monitoring</span>
+                    </h2>
+                    <p class="text-xl text-gray-400">High-performance log visibility with Dozzle</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 dracula-cyan">Key Features</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-magic text-cyan-400 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Zero Configuration</h4>
+                                    <p class="text-sm text-gray-400">Automatically discovers all running containers</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-stream text-cyan-400 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Log Streaming</h4>
+                                    <p class="text-sm text-gray-400">Real-time visibility into application behavior</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-microchip text-cyan-400 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Resource Efficient</h4>
+                                    <p class="text-sm text-gray-400">Extremely low memory footprint</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-lock text-cyan-400 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Security</h4>
+                                    <p class="text-sm text-gray-400">Access restricted via Tailscale VPN</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 bg-black/40">
+                        <img src="dozzle_screenshot.png" alt="Dozzle Screenshot" class="w-full h-auto rounded-lg mb-4">
+                        <div class="text-center">
+                            <p class="text-sm text-gray-400">Dozzle Interface</p>
+                            <p class="text-xs text-gray-600 mt-2">Real-time container log dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resource Limits -->
+        <section data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Governance: <span class="text-gradient">Resource Limits</span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-4 dracula-red">Vulnerable Config (Legacy)</h3>
+                    <div class="code-block">
+                        <pre class="text-sm text-gray-300"><code><span class="dracula-cyan">services:</span>
+  <span class="dracula-green">student-portal:</span>
+    <span class="dracula-yellow">image:</span> sdc/portal:latest
+    <span class="dracula-pink"># No resource constraints</span>
+    <span class="dracula-pink"># One bug can take down the whole host</span></code></pre>
+                    </div>
+                </div>
+
+                <div data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-4 dracula-green">Resilient Config (Current)</h3>
+                    <div class="code-block">
+                        <pre class="text-sm text-gray-300"><code><span class="dracula-cyan">services:</span>
+  <span class="dracula-green">student-portal:</span>
+    <span class="dracula-yellow">image:</span> sdc/portal:latest
+    <span class="dracula-yellow">deploy:</span>
+      <span class="dracula-yellow">resources:</span>
+        <span class="dracula-orange">limits:</span>
+          <span class="dracula-cyan">cpus:</span> <span class="dracula-green">'0.50'</span>     <span class="dracula-pink"># HARD CAP: 50% of 1 core</span>
+          <span class="dracula-cyan">memory:</span> <span class="dracula-green">512M</span>      <span class="dracula-pink"># OOM Kill if exceeded</span>
+        <span class="dracula-orange">reservations:</span>
+          <span class="dracula-cyan">cpus:</span> <span class="dracula-green">'0.10'</span>
+          <span class="dracula-cyan">memory:</span> <span class="dracula-green">128M</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 mt-8 bg-yellow-900/10 border-yellow-500/30" data-aos="fade-up">
+                <p class="text-gray-300">
+                    <strong class="text-yellow-400">Kernel Level:</strong> Uses Linux <code class="text-yellow-400 font-mono text-sm">cgroups</code> to throttle malicious or buggy processes without crashing the OS
+                </p>
+            </div>
+        </section>
+
+        <!-- Storage Modernization -->
+        <section data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Storage <span class="text-gradient">Modernization</span>
+                </h2>
+                <p class="text-xl text-gray-400">MinIO Object Storage Migration</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-8" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6 dracula-red">The Problem</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span>Hard to scale</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span>Single Point of Failure</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-times text-red-400 mt-1"></i>
+                            <span>Inefficient for active files</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="glass-card p-8" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-6 dracula-green">MinIO Solution</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>Immutable:</strong> WORM locking</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>S3 API:</strong> Cloud Native standard</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check text-green-400 mt-1"></i>
+                            <span><strong>Decoupled:</strong> High availability</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section id="results" data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Reliability <span class="text-gradient">Metrics</span>
+                </h2>
+                <p class="text-xl text-gray-400">Quantifying the impact of engineering changes</p>
+            </div>
+
+            <div class="glass-card p-8 overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="pb-4 font-bold text-cyan-400">Metric</th>
+                            <th class="pb-4 font-bold text-cyan-400">Definition</th>
+                            <th class="pb-4 font-bold text-cyan-400">Before</th>
+                            <th class="pb-4 font-bold text-cyan-400">After</th>
+                            <th class="pb-4 font-bold text-cyan-400">Improvement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-white/5">
+                            <td class="py-4 font-bold">RPO</td>
+                            <td class="py-4 text-gray-400">Recovery Point Objective</td>
+                            <td class="py-4 text-red-400">24 Hours</td>
+                            <td class="py-4 text-green-400 font-bold">1 Hour</td>
+                            <td class="py-4 text-purple-400 font-bold">24x Better</td>
+                        </tr>
+                        <tr class="border-b border-white/5">
+                            <td class="py-4 font-bold">RTO</td>
+                            <td class="py-4 text-gray-400">Recovery Time Objective</td>
+                            <td class="py-4 text-red-400">~4 Hours</td>
+                            <td class="py-4 text-green-400 font-bold">&lt; 5 Mins</td>
+                            <td class="py-4 text-purple-400 font-bold">48x Faster</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 font-bold">Uptime</td>
+                            <td class="py-4 text-gray-400">Availability</td>
+                            <td class="py-4 text-red-400">92%</td>
+                            <td class="py-4 text-green-400 font-bold">99.9%</td>
+                            <td class="py-4 text-purple-400 font-bold">High Availability</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section data-aos="fade-up">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Technology <span class="text-gradient">Stack</span>
+                </h2>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="0">
+                    <i class="fab fa-docker mr-2"></i>Docker
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="50">
+                    <i class="fab fa-github mr-2"></i>GitHub Actions
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="100">
+                    <i class="fas fa-network-wired mr-2"></i>Tailscale
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="150">
+                    <i class="fas fa-database mr-2"></i>MinIO
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="200">
+                    <i class="fas fa-terminal mr-2"></i>Bash
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="250">
+                    <i class="fas fa-sync mr-2"></i>rsync
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="300">
+                    <i class="fas fa-chart-line mr-2"></i>Dozzle
+                </span>
+                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="350">
+                    <i class="fab fa-linux mr-2"></i>Ubuntu 24
+                </span>
+            </div>
+        </section>
+
+        <!-- Terminal Simulator -->
+        <section id="terminal-sim" data-aos="fade-up">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Live <span class="text-gradient">CI/CD Pipeline</span>
+                </h2>
+                <p class="text-xl text-gray-400">Watch the automated deployment in action</p>
+            </div>
+
+            <div class="terminal max-w-4xl mx-auto">
+                <div class="flex items-center justify-between p-4 border-b border-white/10">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <span class="text-xs text-gray-500 font-mono">deployment.log</span>
+                    <button @click="runSimulation" :disabled="isRunning" class="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 text-xs hover:bg-cyan-500/30 transition-colors disabled:opacity-50">
+                        <i class="fas fa-redo mr-1"></i>Replay
+                    </button>
+                </div>
+                <div class="p-6 h-96 overflow-y-auto space-y-2">
+                    <div v-for="log in logs" :key="log.id" class="flex gap-4 items-start fade-in-up">
+                        <span class="text-gray-600 text-xs font-mono">{{ log.time }}</span>
+                        <span class="text-gray-300 text-sm" :class="log.type" v-html="log.text"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chaos Engineering Simulator -->
+        <section id="chaos-sim" data-aos="fade-up">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-gradient">Chaos</span> Simulator
+                </h2>
+                <p class="text-xl text-gray-400">Test the infrastructure's self-healing capabilities</p>
+            </div>
+
+            <div id="chaos-app" class="glass-card p-8 md:p-12">
+                <div class="flex flex-wrap justify-center gap-8 mb-12">
+                    <div v-for="service in services" :key="service.name"
+                         class="relative group w-40 p-6 rounded-2xl border transition-all duration-500"
+                         :class="service.status === 'healthy' ? 'border-green-500/30 bg-green-500/5' :
+                                 service.status === 'failed' ? 'border-red-500/50 bg-red-500/10 animate-pulse' :
+                                 'border-yellow-500/50 bg-yellow-500/10'">
+
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
+                             :class="service.status === 'healthy' ? 'bg-green-500' :
+                                     service.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'">
+                            <i class="fas" :class="service.status === 'healthy' ? 'fa-check' :
+                                                  service.status === 'failed' ? 'fa-bolt' : 'fa-sync fa-spin'"></i>
+                        </div>
+
+                        <div class="text-center">
+                            <i class="fas text-4xl mb-4" :class="[service.icon, service.status === 'healthy' ? 'text-green-400' : 'text-gray-400']"></i>
+                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">{{ service.name }}</h4>
+                            <div class="text-[10px] font-mono opacity-60">{{ service.id }}</div>
+                        </div>
+
+                        <!-- Progress Bar for Healing -->
+                        <div v-if="service.status === 'healing'" class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-yellow-400 transition-all duration-[2000ms]" :style="{ width: healingProgress + '%' }"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button @click="triggerChaos" :disabled="isChaosRunning"
+                            class="px-8 py-4 rounded-xl font-bold transition-all group relative overflow-hidden"
+                            :class="isChaosRunning ? 'bg-gray-800 text-gray-500' : 'bg-red-500 text-white hover:bg-red-600 hover:scale-105'">
+                        <span class="relative z-10">
+                            <i class="fas fa-biohazard mr-2"></i>
+                            {{ isChaosRunning ? 'System Recovering...' : 'Trigger Random Failure' }}
+                        </span>
+                        <div v-if="!isChaosRunning" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </button>
+
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
+                            <span class="text-xs font-mono">Detection: {{ stats.detectionTime }}ms</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
+                            <span class="text-xs font-mono">Recovery: {{ stats.recoveryTime }}ms</span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
+                            <span class="text-xs font-mono">Status: {{ isChaosRunning ? 'HEALING' : 'STABLE' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap -->
         <section id="roadmap" data-aos="fade-up">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-black mb-4 dracula-cyan">PBL Roadmap</h2>
-                <p class="opacity-60 text-lg">Project evolution from Semester 4 and beyond</p>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Future <span class="text-gradient">Roadmap</span>
+                </h2>
             </div>
-            
-            <div class="relative max-w-4xl mx-auto px-10 border-l-2 border-white/10 ml-6 md:ml-auto">
-                <div class="mb-12 relative" data-aos="fade-left">
-                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-green flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
-                        <i class="fas fa-check text-xs"></i>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-500/50">
+                            <i class="fas fa-lock text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold mb-2 dracula-accent">Phase 1: Immutable Backups</h4>
+                            <p class="text-gray-400">Enable Object Locking (Governance Mode) on MinIO for ransomware protection</p>
+                        </div>
                     </div>
-                    <h4 class="text-xl font-bold dracula-green uppercase">Phase 1: Foundation ✓</h4>
-                    <p class="opacity-60 mt-2 text-sm">CI/CD, Zero Trust Networking, and Resource Capping.</p>
                 </div>
-                
-                <div class="mb-12 relative" data-aos="fade-left" data-aos-delay="200">
-                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-orange flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
-                        <i class="fas fa-hourglass-half text-xs"></i>
+
+                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="100">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/50">
+                            <i class="fas fa-bolt text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold mb-2 dracula-orange">Phase 2: Chaos Engineering</h4>
+                            <p class="text-gray-400">Implementing "Chaos Monkey" testing for self-healing verification</p>
+                        </div>
                     </div>
-                    <h4 class="text-xl font-bold dracula-orange uppercase">Phase 2: Chaos Engineering</h4>
-                    <p class="opacity-60 mt-2 text-sm">Implementing "Chaos Monkey" testing for self-healing verification.</p>
                 </div>
-                
-                <div class="relative" data-aos="fade-left" data-aos-delay="400">
-                    <div class="absolute -left-[51px] top-0 w-10 h-10 rounded-full bg-dracula-cyan flex items-center justify-center text-[#282a36] font-black border-4 border-[#282a36]">
-                        <i class="fas fa-layer-group text-xs"></i>
+
+                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="200">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/50">
+                            <i class="fas fa-globe text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold mb-2 dracula-cyan">Phase 3: Multi-Region</h4>
+                            <p class="text-gray-400">Automated regional failover and geographic replication</p>
+                        </div>
                     </div>
-                    <h4 class="text-xl font-bold dracula-cyan uppercase">Phase 3: Multi-Region</h4>
-                    <p class="opacity-60 mt-2 text-sm">Automated regional failover and geographic replication.</p>
+                </div>
+
+                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="300">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-green-500/50">
+                            <i class="fas fa-shield text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-bold mb-2 dracula-green">Phase 4: Security Guardrails</h4>
+                            <p class="text-gray-400">Automate dependency patching (Renovate/Dependabot) to prevent zero-day exposure</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="text-center py-24" data-aos="fade-up">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8">
+                <span class="text-gradient">Resilience</span> is not a product
+            </h2>
+            <p class="text-3xl md:text-4xl font-light text-gray-400 mb-16">
+                It is an <span class="text-purple-400 font-semibold">architectural choice</span>
+            </p>
+            <div class="text-2xl font-light text-gray-500 mb-8">Thank You</div>
+            <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="inline-flex items-center gap-3 text-pink-400 font-mono hover:text-pink-300 transition-colors">
+                <i class="fab fa-github"></i>
+                github.com/vinayaktyagi10/pbl_project
+            </a>
         </section>
 
     </main>
@@ -674,50 +1491,211 @@ graph LR
     <!-- Footer -->
     <footer class="py-24 text-center border-t border-white/5 bg-black/40">
         <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-3xl font-black mb-4 dracula-cyan tracking-tighter uppercase">SDC Infrastructure Team</h2>
-            <p class="text-xs opacity-60 mb-12 uppercase tracking-[0.2em]">
-                PBL Semester 4 Project by <span class="dracula-pink font-bold">Vinayak Tyagi</span>
+            <div class="flex justify-center items-center gap-6 mb-6">
+                <img src="sdc_logo.jpg" alt="SDC Logo" class="h-12 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg">
+                <img src="muj_logo.png" alt="MUJ Logo" class="h-10 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg bg-white p-1.5">
+            </div>
+            <h2 class="text-4xl font-bold mb-4">
+                <span class="text-gradient">SDC Infrastructure Team</span>
+            </h2>
+            <p class="text-sm text-gray-500 mb-12 uppercase tracking-widest">
+                PBL Semester 4 Project by <span class="text-pink-400 font-bold">Vinayak Tyagi</span>
             </p>
             <div class="flex flex-wrap justify-center gap-8 md:gap-16 mb-12">
-                <a href="https://github.com/vinayaktyagi10/pbl_project" class="group flex flex-col items-center">
-                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-dracula-pink group-hover:scale-110 transition-all border border-white/10">
-                        <i class="fab fa-github text-lg"></i>
+                <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="group flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-purple-500/30 group-hover:shadow-lg group-hover:shadow-purple-500/50">
+                        <i class="fab fa-github text-2xl text-purple-400"></i>
                     </div>
-                    <span class="text-[10px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-100 transition-opacity">Repository</span>
+                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-purple-400 transition-colors">Repository</span>
                 </a>
                 <a href="./slides" class="group flex flex-col items-center">
-                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-dracula-cyan group-hover:scale-110 transition-all border border-white/10">
-                        <i class="fas fa-play text-lg"></i>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-cyan-500/30 group-hover:shadow-lg group-hover:shadow-cyan-500/50">
+                        <i class="fas fa-play text-2xl text-cyan-400"></i>
                     </div>
-                    <span class="text-[10px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-100 transition-opacity">Slides</span>
+                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-cyan-400 transition-colors">Slides</span>
                 </a>
-                <a href="https://github.com/vinayaktyagi10/pbl_project#readme" class="group flex flex-col items-center">
-                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-dracula-green group-hover:scale-110 transition-all border border-white/10">
-                        <i class="fas fa-book text-lg"></i>
+                <a href="https://github.com/vinayaktyagi10/pbl_project#readme" target="_blank" class="group flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-green-500/30 group-hover:shadow-lg group-hover:shadow-green-500/50">
+                        <i class="fas fa-book text-2xl text-green-400"></i>
                     </div>
-                    <span class="text-[10px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-100 transition-opacity">Docs</span>
+                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-green-400 transition-colors">Docs</span>
                 </a>
-                <a href="https://github.com/vinayaktyagi10" class="group flex flex-col items-center">
-                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:bg-dracula-orange group-hover:scale-110 transition-all border border-white/10">
-                        <i class="fas fa-user-astronaut text-lg"></i>
+                <a href="https://github.com/vinayaktyagi10" target="_blank" class="group flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-orange-500/30 group-hover:shadow-lg group-hover:shadow-orange-500/50">
+                        <i class="fas fa-user-astronaut text-2xl text-orange-400"></i>
                     </div>
-                    <span class="text-[10px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-100 transition-opacity">Author</span>
+                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-orange-400 transition-colors">Author</span>
                 </a>
             </div>
-            <p class="text-[9px] font-mono opacity-20 uppercase tracking-[0.5em]">Resilience • Security • Automation • 2026</p>
+            <p class="text-xs font-mono text-gray-700 uppercase tracking-[0.5em]">Resilience • Security • Automation • 2026</p>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top bg-dracula-cyan text-[#282a36] w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all">
-        <i class="fas fa-arrow-up"></i>
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up text-xl"></i>
     </button>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
-        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.page-loader').classList.add('hidden');
+            }, 1500);
+        });
+
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.color = `rgba(${Math.random() > 0.5 ? '189, 147, 249' : '139, 233, 253'}, ${Math.random() * 0.5 + 0.2})`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+                if (mouse.x && mouse.y) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const angle = Math.atan2(dy, dx);
+                        this.x -= Math.cos(angle) * force * 2;
+                        this.y -= Math.sin(angle) * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const numberOfParticles = Math.min((canvas.width * canvas.height) / 15000, 100);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        ctx.strokeStyle = `rgba(189, 147, 249, ${0.1 - distance / 1200})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        document.querySelectorAll('[data-tilt]').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        const html = document.documentElement;
+
+        function toggleTheme() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            const icon = newTheme === 'light' ? 'fa-sun' : 'fa-moon';
+            document.querySelectorAll('.theme-toggle-slider i').forEach(i => {
+                i.className = `fas ${icon}`;
+            });
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        mobileThemeToggle.addEventListener('click', toggleTheme);
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'light') {
+            document.querySelectorAll('.theme-toggle-slider i').forEach(i => {
+                i.className = 'fas fa-sun';
+            });
+        }
+
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
         const { createApp, ref, computed, onMounted } = Vue;
 
         // Terminal Simulator
@@ -773,11 +1751,79 @@ graph LR
             }
         }).mount('#storage-app');
 
-        // Nav & UI logic
+        // Chaos Simulator
+        createApp({
+            setup() {
+                const services = ref([
+                    { name: 'Gateway', id: 'sdc-gw-01', status: 'healthy', icon: 'fa-network-wired' },
+                    { name: 'Auth API', id: 'sdc-auth-04', status: 'healthy', icon: 'fa-user-shield' },
+                    { name: 'Database', id: 'sdc-db-main', status: 'healthy', icon: 'fa-database' },
+                    { name: 'Storage', id: 'sdc-minio-01', status: 'healthy', icon: 'fa-cloud' }
+                ]);
+
+                const isChaosRunning = ref(false);
+                const healingProgress = ref(0);
+                const stats = ref({ detectionTime: 0, recoveryTime: 0 });
+
+                const triggerChaos = async () => {
+                    if (isChaosRunning.value) return;
+                    isChaosRunning.value = true;
+
+                    // 1. Random Failure
+                    const index = Math.floor(Math.random() * services.value.length);
+                    services.value[index].status = 'failed';
+                    stats.value.detectionTime = 0;
+                    stats.value.recoveryTime = 0;
+
+                    // 2. Detection Phase
+                    await new Promise(r => setTimeout(r, 800));
+                    stats.value.detectionTime = Math.floor(Math.random() * 200) + 100;
+                    services.value[index].status = 'healing';
+
+                    // 3. Recovery Phase
+                    const startTime = Date.now();
+                    healingProgress.value = 0;
+                    const interval = setInterval(() => {
+                        healingProgress.value += 5;
+                        if (healingProgress.value >= 100) clearInterval(interval);
+                    }, 100);
+
+                    await new Promise(r => setTimeout(r, 2000));
+                    stats.value.recoveryTime = Date.now() - startTime;
+                    services.value[index].status = 'healthy';
+                    isChaosRunning.value = false;
+                };
+
+                return { services, isChaosRunning, triggerChaos, healingProgress, stats };
+            }
+        }).mount('#chaos-app');
+
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const closeMenuBtn = document.getElementById('close-menu-btn');
         const backToTopBtn = document.getElementById('back-to-top');
+
+        // Modal Logic
+        const openModalBtn = document.getElementById('open-postmortem');
+        const closeModalBtn = document.getElementById('close-postmortem');
+        const modal = document.getElementById('postmortem-modal');
+        const modalOverlay = document.getElementById('close-modal-overlay');
+
+        const toggleModal = (show) => {
+            if (show) {
+                modal.classList.remove('pointer-events-none', 'opacity-0');
+                modal.querySelector('.glass-card').classList.remove('scale-95');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('pointer-events-none', 'opacity-0');
+                modal.querySelector('.glass-card').classList.add('scale-95');
+                document.body.style.overflow = '';
+            }
+        };
+
+        if (openModalBtn) openModalBtn.addEventListener('click', () => toggleModal(true));
+        if (closeModalBtn) closeModalBtn.addEventListener('click', () => toggleModal(false));
+        if (modalOverlay) modalOverlay.addEventListener('click', () => toggleModal(false));
 
         mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
         closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('active'));
@@ -786,12 +1832,35 @@ graph LR
         window.addEventListener('scroll', () => {
             if (window.scrollY > 500) backToTopBtn.classList.add('visible');
             else backToTopBtn.classList.remove('visible');
+
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const scrollProgress = document.getElementById("scroll-progress");
+            if (scrollProgress) scrollProgress.style.width = scrolled + "%";
+
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
         });
+
         backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-        // Mermaid
-        mermaid.initialize({ 
-            startOnLoad: true, 
+        mermaid.initialize({
+            startOnLoad: true,
             theme: 'base',
             themeVariables: {
                 darkMode: true,
@@ -805,27 +1874,16 @@ graph LR
             }
         });
 
-        // Scroll Progress
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById("scroll-progress").style.width = scrolled + "%";
-        });
-
-        // Copy Code Buttons
         document.querySelectorAll('.code-block').forEach(block => {
-            block.style.position = 'relative';
-            const button = document.createElement('button');
-            button.className = 'copy-btn';
-            button.innerText = 'Copy';
-            button.onclick = () => {
-                const code = block.querySelector('pre').innerText;
-                navigator.clipboard.writeText(code);
-                button.innerText = 'Copied!';
-                setTimeout(() => button.innerText = 'Copy', 2000);
-            };
-            block.appendChild(button);
+            const button = block.querySelector('.copy-btn');
+            if (button) {
+                button.onclick = () => {
+                    const code = block.querySelector('pre').innerText;
+                    navigator.clipboard.writeText(code);
+                    button.innerText = 'Copied!';
+                    setTimeout(() => button.innerText = 'Copy', 2000);
+                };
+            }
         });
     </script>
 </body>

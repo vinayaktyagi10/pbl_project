@@ -45,7 +45,7 @@ We engineered a **Self-Healing Infrastructure** capable of surviving catastrophi
 
 <div v-click>
 
-### The "Before" State {class="text-red-400"}
+### <carbon:warning-alt class="text-red-400" /> The "Before" State {class="text-red-400"}
 
 - **Fragile:** Manual backups (human error prone).
 - **Insecure:** Publicly exposed SSH ports.
@@ -55,7 +55,7 @@ We engineered a **Self-Healing Infrastructure** capable of surviving catastrophi
 
 <div v-click>
 
-### The "After" State {class="text-green-400"}
+### <carbon:shield-check class="text-green-400" /> The "After" State {class="text-green-400"}
 
 - **Resilient:** Automated incremental snapshots.
 - **Secure:** Zero Trust Mesh Network.
@@ -365,13 +365,13 @@ Quantifying the impact of these engineering changes.
 
 # Future Roadmap
 
-- **Phase 1: Immutable Backups**
+- **<carbon:locked /> Phase 1: Immutable Backups**
   - Enable Object Locking (Governance Mode) on MinIO.
-- **Phase 2: Chaos Engineering**
+- **<carbon:Flash /> Phase 2: Chaos Engineering**
   - Implement "Chaos Monkey" for auto-restart verification.
-- **Phase 3: Multi-Region Sync**
+- **<carbon:Earth /> Phase 3: Multi-Region Sync**
   - Off-site replication for disaster recovery.
-- **Phase 4: Security Guardrails**
+- **<carbon:Security /> Phase 4: Security Guardrails**
   - Automate dependency patching (Renovate/Dependabot) to prevent zero-day exposure.
 
 ---
