@@ -693,19 +693,19 @@
                     <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-6 float-animation">
                         <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
                     </div>
-                    <h3 class="text-3xl font-bold mb-4 dracula-red">The "Before" State</h3>
+                    <h3 class="text-3xl font-bold mb-4 dracula-red">Legacy Constraints</h3>
                     <ul class="space-y-3 text-gray-400">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Fragile:</strong> Manual backups prone to human error</span>
+                            <span><strong>Inaccessible:</strong> Bare-metal nodes lack public static IPs.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Insecure:</strong> Publicly exposed SSH ports</span>
+                            <span><strong>Manual:</strong> Recovery workflows prone to human error.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Unstable:</strong> No resource limits or constraints</span>
+                            <span><strong>Unstable:</strong> Unconstrained container resource consumption.</span>
                         </li>
                     </ul>
                 </div>
@@ -714,19 +714,19 @@
                     <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mb-6 float-animation" style="animation-delay: 0.5s;">
                         <i class="fas fa-shield text-2xl text-white"></i>
                     </div>
-                    <h3 class="text-3xl font-bold mb-4 dracula-green">The "After" State</h3>
+                    <h3 class="text-3xl font-bold mb-4 dracula-green">Hardened State</h3>
                     <ul class="space-y-3 text-gray-400">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Resilient:</strong> Automated incremental snapshots</span>
+                            <span><strong>Unified:</strong> Bare-metal to Cloud mesh connectivity.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Secure:</strong> Zero Trust Mesh Network</span>
+                            <span><strong>Automated:</strong> Point-in-time incremental snapshots.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Governed:</strong> Kernel-level CPU/RAM constraints</span>
+                            <span><strong>Governed:</strong> Kernel-level resource constraints.</span>
                         </li>
                     </ul>
                 </div>
@@ -937,28 +937,27 @@ graph LR
             </div>
         </section>
 
-        <!-- Security -->
         <section id="security" data-aos="fade-up">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-gradient">Zero Trust</span> Networking
+                    <span class="text-gradient">Mesh</span> Connectivity
                 </h2>
                 <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Eliminated public attack surfaces using Tailscale (WireGuard protocol)
+                    Bridging Bare-metal and Cloud infrastructure via Tailscale
                 </p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="glass-card p-8" data-aos="fade-right">
-                    <h3 class="text-2xl font-bold mb-6 dracula-cyan">Key Features</h3>
+                    <h3 class="text-2xl font-bold mb-6 dracula-cyan">Infrastructure Integration</h3>
                     <div class="space-y-4">
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-shield-virus text-cyan-400"></i>
+                                <i class="fas fa-network-wired text-cyan-400"></i>
                             </div>
                             <div>
-                                <h4 class="font-semibold mb-1">No Public Ports</h4>
-                                <p class="text-sm text-gray-400">SSH port 22 is completely closed</p>
+                                <h4 class="font-semibold mb-1">Peer-to-Peer Mesh</h4>
+                                <p class="text-sm text-gray-400">Seamless communication between Bare-metal and VPS nodes.</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
@@ -967,16 +966,16 @@ graph LR
                             </div>
                             <div>
                                 <h4 class="font-semibold mb-1">Identity Based</h4>
-                                <p class="text-sm text-gray-400">Access controlled via SSO</p>
+                                <p class="text-sm text-gray-400">Secure access controlled via SSO and identity verification.</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-network-wired text-cyan-400"></i>
+                                <i class="fas fa-route text-cyan-400"></i>
                             </div>
                             <div>
-                                <h4 class="font-semibold mb-1">NAT Traversal</h4>
-                                <p class="text-sm text-gray-400">Works seamlessly behind firewalls</p>
+                                <h4 class="font-semibold mb-1">Dynamic Traversal</h4>
+                                <p class="text-sm text-gray-400">Stable connectivity without public static IP requirements.</p>
                             </div>
                         </div>
                     </div>
@@ -988,18 +987,16 @@ graph LR
                         <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                         <div class="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
-                    <div class="space-y-2 text-sm">
-                        <div class="text-green-400">$ sudo ufw status</div>
-                        <div class="text-gray-400">Status: active</div>
-                        <div class="mt-4 text-gray-400">
-                            <div>To           Action      From</div>
-                            <div>--           ------      ----</div>
-                            <div>22/tcp       <span class="text-red-400 font-bold">DENY IN</span>     Anywhere</div>
-                            <div>443/tcp      <span class="text-green-400">ALLOW IN</span>    Anywhere</div>
-                            <div>41641/udp    <span class="text-green-400">ALLOW IN</span>    Anywhere</div>
+                    <div class="space-y-2 text-sm font-mono">
+                        <div class="text-green-400">$ tailscale status</div>
+                        <div class="text-gray-400">
+                            <div>bare-metal-01   100.64.0.5    linux   active</div>
+                            <div>cloud-vps-01     100.64.0.12   linux   active</div>
                         </div>
+                        <div class="mt-6 text-green-400">$ ping bare-metal-01</div>
+                        <div class="text-gray-400">64 bytes from 100.64.0.5: icmp_seq=1 ttl=64 time=12.4 ms</div>
                         <div class="mt-6 text-xs text-gray-600 italic text-center">
-                            # Infrastructure is invisible to external scanners
+                            # Seamless connectivity bridging private environments
                         </div>
                     </div>
                 </div>
@@ -1242,7 +1239,7 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
                 <p class="text-xl text-gray-400">Quantifying the impact of engineering changes</p>
             </div>
 
-            <div class="glass-card p-8 overflow-x-auto">
+            <div class="glass-card p-8">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-white/10">
@@ -1604,7 +1601,7 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
 
         function initParticles() {
             particles = [];
-            const numberOfParticles = Math.min((canvas.width * canvas.height) / 15000, 100);
+            const numberOfParticles = Math.min((canvas.width * canvas.height) / 30000, 60);
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push(new Particle());
             }
@@ -1617,9 +1614,9 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
                     const dy = particles[i].y - particles[j].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 120) {
-                        ctx.strokeStyle = `rgba(189, 147, 249, ${0.1 - distance / 1200})`;
-                        ctx.lineWidth = 0.5;
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(189, 147, 249, ${0.08 - distance / 1000})`;
+                        ctx.lineWidth = 0.4;
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
