@@ -384,6 +384,84 @@
             box-shadow: 0 12px 32px rgba(189, 147, 249, 0.6);
         }
 
+        /* Timer UI - Professional Engineering Style */
+        #timer-app {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 100;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timer-card {
+            background: rgba(26, 26, 36, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: -0.05em;
+            text-shadow: 0 0 15px rgba(139, 233, 253, 0.3);
+        }
+
+        .timer-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-secondary);
+            margin-bottom: -2px;
+        }
+
+        .timer-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Warning State */
+        .timer-warning .timer-card {
+            border-color: rgba(255, 184, 108, 0.4);
+            box-shadow: 0 0 30px rgba(255, 184, 108, 0.2);
+        }
+        .timer-warning .timer-display { color: var(--accent-orange); }
+        .timer-warning .timer-pulse { 
+            background: var(--accent-orange); 
+            box-shadow: 0 0 15px var(--accent-orange);
+            animation: timer-blink 1s infinite;
+        }
+
+        /* Critical State */
+        .timer-critical .timer-card {
+            border-color: rgba(255, 85, 85, 0.5);
+            background: rgba(68, 30, 30, 0.8);
+            box-shadow: 0 0 40px rgba(255, 85, 85, 0.3);
+        }
+        .timer-critical .timer-display { color: var(--accent-red); }
+        .timer-critical .timer-pulse { 
+            background: var(--accent-red); 
+            box-shadow: 0 0 20px var(--accent-red);
+            animation: timer-blink 0.4s infinite;
+        }
+
+        @keyframes timer-blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
         .hero-title {
             font-size: clamp(3rem, 8vw, 7rem);
             line-height: 0.95;
@@ -1528,6 +1606,17 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
         </div>
     </footer>
 
+    <!-- Timer UI -->
+    <div id="timer-app" :class="timerClass">
+        <div class="timer-card">
+            <div class="timer-pulse"></div>
+            <div>
+                <div class="timer-label">Session Time</div>
+                <div class="timer-display">{{ formattedTime }}</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button id="back-to-top" class="back-to-top">
         <i class="fas fa-arrow-up text-xl"></i>
@@ -1627,6 +1716,10 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
         }
 
         function animateParticles() {
+            if (document.hidden) {
+                requestAnimationFrame(animateParticles);
+                return;
+            }
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(particle => {
                 particle.update();
@@ -1794,6 +1887,34 @@ rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--dele
                 return { services, isChaosRunning, triggerChaos, healingProgress, stats };
             }
         }).mount('#chaos-app');
+
+        // Session Timer
+        createApp({
+            setup() {
+                const timeLeft = ref(600); // 10 minutes
+                
+                const formattedTime = computed(() => {
+                    const mins = Math.floor(timeLeft.value / 60);
+                    const secs = timeLeft.value % 60;
+                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                });
+
+                const timerClass = computed(() => {
+                    if (timeLeft.value <= 10) return 'timer-critical';
+                    if (timeLeft.value <= 60) return 'timer-warning';
+                    return '';
+                });
+
+                onMounted(() => {
+                    const interval = setInterval(() => {
+                        if (timeLeft.value > 0) timeLeft.value--;
+                        else clearInterval(interval);
+                    }, 1000);
+                });
+
+                return { formattedTime, timerClass };
+            }
+        }).mount('#timer-app');
 
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
