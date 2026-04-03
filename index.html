@@ -1,2006 +1,362 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBL Project | SDC Infrastructure - Vinayak Tyagi</title>
-
+    <title>Production Infrastructure Automation | PBL 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
-
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #141419;
-            --bg-card: #1a1a24;
-            --bg-terminal: #0d0d12;
-            --accent-purple: #bd93f9;
-            --accent-green: #50fa7b;
-            --accent-pink: #ff79c6;
-            --accent-orange: #ffb86c;
-            --accent-red: #ff5555;
-            --accent-cyan: #8be9fd;
-            --accent-yellow: #f1fa8c;
-            --text-primary: #f8f8f2;
-            --text-secondary: #a0a0ab;
-            --glow-purple: rgba(189, 147, 249, 0.4);
-            --glow-cyan: rgba(139, 233, 253, 0.4);
-            --glow-pink: rgba(255, 121, 198, 0.4);
-        }
-
-        [data-theme="light"] {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f7;
-            --bg-card: #ffffff;
-            --bg-terminal: #f5f5f7;
-            --accent-purple: #7c3aed;
-            --accent-green: #10b981;
-            --accent-pink: #ec4899;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
-            --accent-cyan: #06b6d4;
-            --accent-yellow: #eab308;
-            --text-primary: #1a1a1f;
-            --text-secondary: #6b7280;
-            --glow-purple: rgba(124, 58, 237, 0.3);
-            --glow-cyan: rgba(6, 182, 212, 0.3);
-            --glow-pink: rgba(236, 72, 153, 0.3);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-        }
-
-        body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Mermaid Pulse */
-        .mermaid svg {
-            filter: drop-shadow(0 0 10px rgba(189, 147, 249, 0.2));
-            animation: diagram-pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes diagram-pulse {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(189, 147, 249, 0.2)); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 25px rgba(139, 233, 253, 0.4)); transform: scale(1.01); }
-        }
-
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .page-loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loader-bar {
-            width: 200px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-
-        .loader-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-            animation: loading 1.5s ease-in-out;
-        }
-
-        @keyframes loading {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 50%, var(--glow-purple) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, var(--glow-cyan) 0%, transparent 50%),
-                radial-gradient(circle at 40% 90%, var(--glow-pink) 0%, transparent 50%);
-            opacity: 0.15;
-            z-index: -1;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(5%, -5%) scale(1.1); }
-            66% { transform: translate(-5%, 5%) scale(0.95); }
-        }
-
-        h1, h2, h3 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-        }
-
-        .text-gradient {
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientFlow 8s ease infinite;
-            background-size: 200% 200%;
-        }
-
-        @keyframes gradientFlow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .glass-card {
-            background: rgba(26, 26, 36, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            box-shadow:
-                0 8px 32px 0 rgba(0, 0, 0, 0.37),
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        [data-theme="light"] .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow:
-                0 8px 32px 0 rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
-            transition: left 0.7s;
-        }
-
-        .glass-card:hover::before {
-            left: 100%;
-        }
-
-        .glass-card:hover {
-            border-color: rgba(189, 147, 249, 0.3);
-            box-shadow:
-                0 24px 48px 0 rgba(189, 147, 249, 0.2),
-                0 0 80px 0 rgba(189, 147, 249, 0.15),
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .card-tilt {
-            transition: transform 0.3s ease;
-        }
-
-        nav {
-            background: rgba(10, 10, 15, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.3s ease;
-        }
-
-        [data-theme="light"] nav {
-            background: rgba(255, 255, 255, 0.8);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-link {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            padding: 0.5rem 1rem;
-            border-radius: 12px;
-        }
-
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: -1;
-        }
-
-        .nav-link:hover::before {
-            opacity: 0.1;
-        }
-
-        .nav-link:hover {
-            transform: translateY(-2px);
-            color: var(--accent-cyan);
-        }
-
-        .nav-link.active {
-            color: var(--accent-cyan);
-        }
-
-        .nav-link.active::before {
-            opacity: 0.15;
-        }
-
-        .theme-toggle {
-            width: 56px;
-            height: 28px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .theme-toggle-slider {
-            width: 22px;
-            height: 22px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-
-        [data-theme="light"] .theme-toggle-slider {
-            transform: translateX(28px);
-        }
-
-        .status-pulse {
-            width: 12px;
-            height: 12px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 12px;
-            position: relative;
-        }
-
-        .status-pulse::before,
-        .status-pulse::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            border: 2px solid var(--accent-green);
-            inset: -4px;
-            animation: pulse-ring 2s ease-out infinite;
-        }
-
-        .status-pulse::after {
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(0.8);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.8);
-                opacity: 0;
-            }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .float-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        #scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan));
-            z-index: 100;
-            transition: width 0.1s ease-out;
-            box-shadow: 0 0 20px currentColor;
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-            box-shadow: 0 8px 24px rgba(189, 147, 249, 0.4);
-            z-index: 50;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-4px) scale(1.1);
-            box-shadow: 0 12px 32px rgba(189, 147, 249, 0.6);
-        }
-
-        /* Timer UI - Professional Engineering Style */
-        #timer-app {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            z-index: 100;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .timer-card {
-            background: rgba(26, 26, 36, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 0.75rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .timer-display {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
-            letter-spacing: -0.05em;
-            text-shadow: 0 0 15px rgba(139, 233, 253, 0.3);
-        }
-
-        .timer-label {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.6rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-secondary);
-            margin-bottom: -2px;
-        }
-
-        .timer-pulse {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 10px var(--accent-cyan);
-        }
-
-        /* Warning State */
-        .timer-warning .timer-card {
-            border-color: rgba(255, 184, 108, 0.4);
-            box-shadow: 0 0 30px rgba(255, 184, 108, 0.2);
-        }
-        .timer-warning .timer-display { color: var(--accent-orange); }
-        .timer-warning .timer-pulse { 
-            background: var(--accent-orange); 
-            box-shadow: 0 0 15px var(--accent-orange);
-            animation: timer-blink 1s infinite;
-        }
-
-        /* Critical State */
-        .timer-critical .timer-card {
-            border-color: rgba(255, 85, 85, 0.5);
-            background: rgba(68, 30, 30, 0.8);
-            box-shadow: 0 0 40px rgba(255, 85, 85, 0.3);
-        }
-        .timer-critical .timer-display { color: var(--accent-red); }
-        .timer-critical .timer-pulse { 
-            background: var(--accent-red); 
-            box-shadow: 0 0 20px var(--accent-red);
-            animation: timer-blink 0.4s infinite;
-        }
-
-        @keyframes timer-blink {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.8); }
-        }
-
-        .hero-title {
-            font-size: clamp(3rem, 8vw, 7rem);
-            line-height: 0.95;
-            letter-spacing: -0.05em;
-            font-weight: 800;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.25rem, 3vw, 2rem);
-            font-weight: 300;
-            letter-spacing: 0.02em;
-        }
-
-        /* Glitch Effect */
-        .glitch {
-            position: relative;
-            display: inline-block;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .glitch::before {
-            left: 2px;
-            text-shadow: -2px 0 #ff00c1;
-            clip-path: inset(45% 0 45% 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
-        }
-
-        .glitch::after {
-            left: -2px;
-            text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-            animation: glitch-anim2 1s infinite linear alternate-reverse;
-        }
-
-        @keyframes glitch-anim {
-            0% { clip-path: inset(10% 0 30% 0); transform: translate(-2px, 2px); }
-            10% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
-            20% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
-            30% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
-            40% { clip-path: inset(15% 0 70% 0); transform: translate(-2px, 2px); }
-            50% { clip-path: inset(50% 0 20% 0); transform: translate(2px, -2px); }
-            60% { clip-path: inset(20% 0 40% 0); transform: translate(-2px, 2px); }
-            70% { clip-path: inset(35% 0 15% 0); transform: translate(2px, -2px); }
-            80% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 2px); }
-            90% { clip-path: inset(65% 0 5% 0); transform: translate(2px, -2px); }
-            100% { clip-path: inset(10% 0 20% 0); transform: translate(-2px, 2px); }
-        }
-
-        @keyframes glitch-anim2 {
-            0% { clip-path: inset(25% 0 58% 0); transform: translate(2px, -2px); }
-            20% { clip-path: inset(75% 0 5% 0); transform: translate(-2px, 2px); }
-            40% { clip-path: inset(10% 0 80% 0); transform: translate(2px, -2px); }
-            60% { clip-path: inset(40% 0 45% 0); transform: translate(-2px, 2px); }
-            80% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -2px); }
-            100% { clip-path: inset(5% 0 65% 0); transform: translate(-2px, 2px); }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .reveal {
-            opacity: 0;
-            animation: revealIn 0.8s ease-out forwards;
-        }
-
-        @keyframes revealIn {
-            to {
-                opacity: 1;
-            }
-        }
-
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-
-        .dracula-accent { color: var(--accent-purple); }
-        .dracula-green { color: var(--accent-green); }
-        .dracula-pink { color: var(--accent-pink); }
-        .dracula-orange { color: var(--accent-orange); }
-        .dracula-red { color: var(--accent-red); }
-        .dracula-cyan { color: var(--accent-cyan); }
-
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple));
-        }
-
-        .mobile-menu {
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(10, 10, 15, 0.98);
-            backdrop-filter: blur(20px);
-        }
-
-        [data-theme="light"] .mobile-menu {
-            background: rgba(255, 255, 255, 0.98);
-        }
-
-        .mobile-menu.active {
-            transform: translateX(0);
-        }
-
-        .terminal {
-            background: var(--bg-terminal);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .code-block {
-            background: var(--bg-terminal);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            position: relative;
-        }
-
-        .tech-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            transition: all 0.3s;
-        }
-
-        .tech-pill:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-            border-color: var(--accent-cyan);
-        }
-
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: clamp(2rem, 12vw, 4rem);
-            }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* TIMER UI */
+        #timerContainer { background: #ffffff; color: #020617; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 3px solid #3b82f6; z-index: 1000; }
+        @keyframes flicker { 0%, 100% { background-color: #ffffff; } 50% { background-color: #fca5a5; } }
+        .timer-warning { animation: flicker 1s infinite; border: 3px solid #ef4444 !important; color: #b91c1c !important; }
+        .timer-stop { background-color: #991b1b !important; color: #ffffff !important; border: 3px solid #f87171 !important; animation: none; }
     </style>
 </head>
-<body>
-    <div class="page-loader">
-        <div class="loader-content text-center">
-            <div class="text-2xl font-bold text-gradient mb-2">SDC Infrastructure</div>
-            <div class="text-sm text-gray-500">Loading System</div>
-            <div class="loader-bar">
-                <div class="loader-progress"></div>
-            </div>
-        </div>
+<body onload="startTimer()">
+
+    <div id="timerContainer" class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all">
+        <i class="fas fa-hourglass-start text-blue-600 text-2xl" id="timerIcon"></i>
+        <span id="displayTime" class="text-4xl font-black font-mono tracking-tighter">00:00</span>
     </div>
 
-    <canvas id="particles-canvas"></canvas>
-    <div id="scroll-progress"></div>
-
-    <nav class="fixed top-0 w-full z-50 py-4 px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="#" class="flex items-center gap-3 group">
-                <img src="sdc_logo.jpg" alt="SDC Logo" class="h-10 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg transition-all">
-                <span class="font-bold text-xl hidden md:block">
-                    <span class="text-gradient">SDC</span> Infrastructure
-                </span>
-            </a>
-
-            <div class="hidden md:flex gap-2 items-center">
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mr-4">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <span class="text-[10px] font-bold text-green-500 uppercase tracking-widest">System: Operational</span>
-                </div>
-                <a href="#overview" class="nav-link">Overview</a>
-                <a href="#architecture" class="nav-link">Architecture</a>
-                <a href="#security" class="nav-link">Security</a>
-                <a href="#results" class="nav-link">Results</a>
-                <a href="#roadmap" class="nav-link">Roadmap</a>
-
-                <div class="theme-toggle ml-4" id="theme-toggle">
-                    <div class="theme-toggle-slider">
-                        <i class="fas fa-moon"></i>
-                    </div>
-                </div>
+    <nav class="fixed w-full z-50 glass border-b border-slate-800/50 px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="bg-white p-1 rounded flex items-center justify-center shadow-md" style="height: 48px; width: 48px;">
+                <img src="/muj_logo.png" alt="MUJ" class="h-full w-auto object-contain">
             </div>
-
-            <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                <i class="fas fa-bars text-cyan-400"></i>
-            </button>
+            <div class="flex flex-col text-left">
+                <span class="text-xl font-black text-white leading-none uppercase tracking-tighter">PBL <span class="text-blue-500 italic">2026</span></span>
+                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Dept. of Computer Science & Engineering</span>
+            </div>
+        </div>
+        <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-widest font-bold opacity-70">
+            <a href="#problem" class="hover:text-blue-400 transition">Problem</a>
+            <a href="#methodology" class="hover:text-blue-400 transition">Methodology</a>
+            <a href="#results" class="hover:text-blue-400 transition">Results</a>
+            <a href="#team" class="hover:text-blue-400 transition">Team</a>
         </div>
     </nav>
 
-    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 z-50 p-6 border-l border-white/10">
-        <button id="close-menu-btn" class="absolute top-6 right-6 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-            <i class="fas fa-times text-cyan-400"></i>
-        </button>
-        <div class="flex flex-col gap-4 mt-16">
-            <a href="#overview" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Overview</a>
-            <a href="#architecture" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Architecture</a>
-            <a href="#security" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Security</a>
-            <a href="#results" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Results</a>
-            <a href="#roadmap" class="mobile-nav-link text-lg hover:text-cyan-400 transition-colors">Roadmap</a>
-            <div class="mt-8 flex items-center gap-3">
-                <span class="text-sm">Theme</span>
-                <div class="theme-toggle" id="mobile-theme-toggle">
-                    <div class="theme-toggle-slider">
-                        <i class="fas fa-moon"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Hero Section -->
-    <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-16 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-30">
-            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full filter blur-[128px] animate-pulse"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/30 rounded-full filter blur-[128px] animate-pulse" style="animation-delay: 2s;"></div>
-        </div>
-
-        <div class="max-w-6xl mx-auto text-center relative z-10">
-            <div class="flex justify-center items-center gap-8 mb-12 reveal stagger-1">
-                <div class="relative group">
-                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <img src="sdc_logo.jpg" alt="SDC Infrastructure" class="relative h-24 w-auto rounded-2xl border border-black/10 dark:border-white/10 shadow-2xl transition-all duration-500">
-                </div>
-                <div class="h-12 w-px bg-white/10 hidden md:block"></div>
-                <div class="relative group">
-                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl blur-xl opacity-10 group-hover:opacity-30 transition-opacity"></div>
-                    <img src="muj_logo.png" alt="MUJ Logo" class="relative h-16 w-auto rounded-xl border border-black/10 dark:border-white/10 shadow-xl transition-all duration-500 bg-white p-2">
-                </div>
-            </div>
-
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 reveal stagger-1">
-                <span class="status-pulse"></span>
-                <span class="text-sm font-mono text-green-400">PBL Semester 4 • 2026</span>
-            </div>
-
-            <h1 class="hero-title mb-6 reveal stagger-2">
-                <span class="text-gradient glitch" data-text="Resilient">Resilient</span><br/>
-                Infrastructure
-            </h1>
-
-            <p class="hero-subtitle text-gray-400 mb-4 max-w-3xl mx-auto reveal stagger-3">
-                Automated Disaster Recovery & Self-Healing Systems
+    <main class="max-w-6xl mx-auto px-6 pt-48 pb-32 space-y-32">
+        
+        <section class="text-center">
+            <div class="inline-block px-4 py-1 border border-slate-800 rounded-full text-slate-500 text-[10px] font-mono mb-6 uppercase tracking-widest">ID: 2427030346</div>
+            <h1 class="text-6xl md:text-7xl font-extrabold mb-8 uppercase leading-tight"><span class="gradient-text uppercase">Production Infrastructure Automation</span></h1>
+            <p class="text-slate-400 max-w-2xl mx-auto italic text-lg leading-relaxed border-l-2 border-blue-500/30 pl-6 text-left">
+                "Engineering a resilient deployment pipeline and container optimization system to manage 11+ production services with 82% resource efficiency improvement."
             </p>
+        </section>
 
-            <p class="text-sm text-gray-500 mb-12 reveal stagger-4">
-                Under the guidance of <span class="text-purple-400 font-semibold">Dr. Dibakar Sinha</span>
-            </p>
-
-            <div class="flex flex-wrap justify-center gap-4 mb-16 reveal stagger-5">
-                <a href="#overview" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 font-semibold hover:shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-105">
-                    Explore Project
-                </a>
-                <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 font-semibold hover:bg-white/10 transition-all hover:scale-105">
-                    <i class="fab fa-github mr-2"></i>View Code
-                </a>
-            </div>
-
-            <div class="text-xs text-gray-600 font-mono reveal stagger-5">
-                <i class="fas fa-user mr-2"></i>Vinayak Tyagi (2427030346)
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-16 space-y-32">
-
-        <!-- Project Overview -->
-        <section id="overview" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-5xl md:text-6xl font-bold mb-4">
-                    <span class="text-gradient">Project Overview</span>
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Engineering a self-healing infrastructure capable of surviving catastrophic failures
+        <section id="problem" class="grid md:grid-cols-2 gap-12 items-stretch">
+            <div class="glass p-10 rounded-[2.5rem] flex flex-col justify-center border-l-4 border-blue-600">
+                <h2 class="text-3xl font-extrabold mb-6">Problem Statement</h2>
+                <p class="text-slate-400 leading-relaxed text-justify">
+                    Managing 11+ production services across SDC-MUJ infrastructure with bloated Docker images (2GB+) caused deployment failures, infrastructure waste, and manual deployment overhead. The existing workflow lacked automation, resource governance, and efficient container orchestration.
                 </p>
             </div>
+            <div class="space-y-6">
+                <div class="glass p-7 rounded-3xl border-r-4 border-blue-500/50">
+                    <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest mb-2">Existing Infrastructure Challenges</h3>
+                    <ul class="text-sm text-slate-400 space-y-2">
+                        <li>• 2000MB backend images (excessive build context)</li>
+                        <li>• Manual SSH-based deployments prone to errors</li>
+                        <li>• No centralized platform for DevOps visibility</li>
+                        <li>• Resource exhaustion incidents (58-min downtime)</li>
+                    </ul>
+                </div>
+                <div class="glass p-7 rounded-3xl border-r-4 border-purple-500/50">
+                    <h3 class="text-purple-400 font-bold text-xs uppercase tracking-widest mb-2">Innovation & Solution Approach</h3>
+                    <p class="text-sm text-slate-400">
+                        Implemented multi-stage Docker builds, centralized GitOps deployment platform with Ansible automation, and migrated 11 services to optimized infrastructure with kernel-level resource constraints.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass-card card-tilt p-8" data-aos="fade-right" data-tilt>
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-6 float-animation">
-                        <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 dracula-red">Legacy Constraints</h3>
-                    <ul class="space-y-3 text-gray-400">
+        <section id="methodology" class="space-y-12">
+            <h2 class="text-4xl font-black text-center uppercase tracking-tight">System <span class="text-blue-500">Methodology</span></h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl text-center">
+                    <i class="fas fa-code-branch text-blue-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">GitOps Pipeline</h3>
+                    <p class="text-sm text-slate-500">GitHub Actions → Platform API → Ansible Playbook → Docker Compose orchestration with commit SHA-based deployments</p>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center">
+                    <i class="fas fa-layer-group text-purple-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-2 uppercase text-xs tracking-widest">Container Optimization</h3>
+                    <p class="text-sm text-slate-500">Multi-stage builds, Alpine/Slim base images, production-only dependencies, optimized .dockerignore patterns</p>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center border-2 border-green-500/20 bg-green-500/5">
+                    <i class="fas fa-server text-green-500 text-3xl mb-4"></i>
+                    <h3 class="font-bold mb-4 uppercase text-xs tracking-widest text-green-400">Live Production</h3>
+                    <a href="https://sdcmuj.com" target="_blank" class="px-6 py-2 bg-green-600 rounded-full text-[10px] font-black hover:bg-green-500 transition shadow-lg shadow-green-900/40 inline-block mb-2">SDC-MUJ.COM</a>
+                    <a href="https://icaic.in" target="_blank" class="px-6 py-2 bg-blue-600 rounded-full text-[10px] font-black hover:bg-blue-500 transition shadow-lg shadow-blue-900/40 inline-block">ICAIC.IN</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass p-12 rounded-[3.5rem] border-t-4 border-purple-500">
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tight">Docker Image <span class="text-purple-500">Optimization</span></h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <h3 class="text-lg font-bold text-blue-400 uppercase tracking-wider">Implementation Strategy</h3>
+                    <ul class="space-y-3 text-slate-400 text-sm">
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Inaccessible:</strong> Bare-metal nodes lack public static IPs.</span>
+                            <span class="text-green-500 font-bold">✓</span>
+                            <span><strong>Multi-Stage Builds:</strong> Separate builder and production stages to eliminate build dependencies</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Manual:</strong> Recovery workflows prone to human error.</span>
+                            <span class="text-green-500 font-bold">✓</span>
+                            <span><strong>Base Image Swap:</strong> node:22-bookworm → node:22-slim (Python: slim → headless OpenCV)</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span><strong>Unstable:</strong> Unconstrained container resource consumption.</span>
+                            <span class="text-green-500 font-bold">✓</span>
+                            <span><strong>Dependency Isolation:</strong> Moved dev tools (nodemon, jest) to devDependencies</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-500 font-bold">✓</span>
+                            <span><strong>Build Context Reduction:</strong> Enhanced .dockerignore (tests, configs, dev files)</span>
                         </li>
                     </ul>
                 </div>
-
-                <div class="glass-card card-tilt p-8" data-aos="fade-left" data-tilt>
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mb-6 float-animation" style="animation-delay: 0.5s;">
-                        <i class="fas fa-shield text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 dracula-green">Hardened State</h3>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Unified:</strong> Bare-metal to Cloud mesh connectivity.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Automated:</strong> Point-in-time incremental snapshots.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Governed:</strong> Kernel-level resource constraints.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Team Role -->
-        <section id="role" data-aos="fade-up">
-            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">
-                Team Role & <span class="text-gradient">Mandate</span>
-            </h2>
-
-            <p class="text-xl text-gray-400 text-center mb-12 max-w-3xl mx-auto">
-                As a <span class="text-cyan-400 font-semibold">DevOps Engineer</span>, I led the reliability, security, and delivery layers
-            </p>
-
-            <div class="bento-grid">
-                <div class="bento-card" data-aos="zoom-in" data-aos-delay="0">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mb-4">
-                        <i class="fas fa-robot text-xl text-white"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-2 dracula-cyan">Automation & CI/CD</h4>
-                    <p class="text-gray-400 text-sm">Designed GitHub Actions pipelines to build and push images to self-hosted Docker registry</p>
-                </div>
-
-                <div class="bento-card" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
-                        <i class="fas fa-database text-xl text-white"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-2 dracula-accent">Storage & Backups</h4>
-                    <p class="text-gray-400 text-sm">Orchestrated transition to MinIO S3 and designed rsync snapshot logic</p>
-                </div>
-
-                <div class="bento-card" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center mb-4">
-                        <i class="fas fa-lock text-xl text-white"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-2 dracula-green">Security</h4>
-                    <p class="text-gray-400 text-sm">Configured Tailscale ACLs to enforce Zero Trust and patched critical CVEs</p>
-                </div>
-
-                <div class="bento-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4">
-                        <i class="fas fa-chart-line text-xl text-white"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-2 dracula-orange">Observability</h4>
-                    <p class="text-gray-400 text-sm">Deployed Dozzle for real-time log streaming and container health monitoring</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- The Incident -->
-        <section id="incident" data-aos="fade-up">
-            <div class="glass-card p-8 md:p-12">
-                <div class="text-center mb-12">
-                    <div class="inline-flex items-center gap-3 mb-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center animate-pulse">
-                            <i class="fas fa-bolt text-3xl text-white"></i>
-                        </div>
-                    </div>
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                        The <span class="text-gradient">Incident</span>
-                    </h2>
-                    <p class="text-2xl dracula-red font-semibold">"Black Swan Event"</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-6 dracula-orange">The Trigger</h3>
-                        <p class="text-gray-400 mb-6">A malware container was deployed with unconstrained resources</p>
-
-                        <h3 class="text-2xl font-bold mb-6 dracula-red">The Impact</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-4">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <span class="text-gray-400"><strong class="text-red-400">900% CPU Usage</strong> (Resource Exhaustion)</span>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <span class="text-gray-400"><strong class="text-red-400">Hard Shutdown</strong> by Cloud Provider</span>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <span class="text-gray-400"><strong class="text-red-400">58 Minutes</strong> of Downtime</span>
-                            </div>
-                        </div>
-
-                        <button id="open-postmortem" class="mt-8 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all flex items-center gap-2 group">
-                            <i class="fas fa-file-medical text-red-400 group-hover:scale-110 transition-transform"></i>
-                            View Detailed Post-Mortem
-                        </button>
-                    </div>
-
-                    <div class="code-block">
-                        <pre class="text-xs md:text-sm text-gray-300 overflow-x-auto"><code><span class="dracula-pink">participant</span> A <span class="dracula-cyan">as</span> Attacker/Bug
-<span class="dracula-pink">participant</span> S <span class="dracula-cyan">as</span> Server
-<span class="dracula-pink">participant</span> C <span class="dracula-cyan">as</span> Cloud Provider
-
-A<span class="dracula-orange">->></span>S: Deploy Malicious Container
-<span class="dracula-green">Note over</span> S: CPU Spikes to 300%
-<span class="dracula-green">Note over</span> S: RAM Full (OOM)
-S<span class="dracula-orange">->></span>S: Unresponsive
-C<span class="dracula-orange">->></span>S: <span class="dracula-red">HARD KILL</span> (SLA Violation)
-<span class="dracula-green">Note over</span> S: <span class="dracula-red">DOWNTIME START</span></code></pre>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Post-Mortem Modal -->
-        <div id="postmortem-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-500">
-            <div class="absolute inset-0 bg-black/80 backdrop-blur-md" id="close-modal-overlay"></div>
-            <div class="glass-card w-full max-w-3xl max-h-[80vh] overflow-hidden relative z-10 flex flex-col scale-95 transition-transform duration-500">
-                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                            <i class="fas fa-microscope text-red-400"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-xl">Incident Report: #INC-2025-09</h3>
-                            <p class="text-xs text-gray-500 font-mono">CRITICAL • RESOURCE_EXHAUSTION • COMPLETED</p>
-                        </div>
-                    </div>
-                    <button id="close-postmortem" class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="p-8 overflow-y-auto space-y-8 custom-scrollbar">
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-red-400 font-bold uppercase text-xs tracking-widest mb-4">Root Cause Analysis</h4>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                A legacy deployment script allowed the creation of containers without kernel-level <code class="text-xs bg-red-500/10 px-1 rounded text-red-300">cgroup</code> constraints. A compromised image executed a fork-bomb, causing the host OS to freeze and trigger a hardware-level shutdown by the cloud provider.
-                            </p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-black/40 border border-white/5">
-                            <h4 class="text-cyan-400 font-bold uppercase text-xs tracking-widest mb-4">The "Fix" (Patch)</h4>
-                            <div class="text-[10px] font-mono text-gray-500 space-y-1">
-                                <div class="text-green-400">+ deploy:</div>
-                                <div class="text-green-400">+   resources:</div>
-                                <div class="text-green-400">+     limits:</div>
-                                <div class="text-green-400">+       cpus: '0.50'</div>
-                                <div class="text-green-400">+       memory: 512M</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-purple-400 font-bold uppercase text-xs tracking-widest mb-4">Prevention Strategy</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                                <i class="fas fa-shield-alt text-purple-400 mb-2"></i>
-                                <div class="text-xs font-bold">Admission Controller</div>
-                                <p class="text-[10px] text-gray-500 mt-1">Blocks any container missing resource tags</p>
-                            </div>
-                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                                <i class="fas fa-heartbeat text-purple-400 mb-2"></i>
-                                <div class="text-xs font-bold">Auto-Scaling</div>
-                                <p class="text-[10px] text-gray-500 mt-1">Isolates high-load nodes automatically</p>
-                            </div>
-                            <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                                <i class="fas fa-search-plus text-purple-400 mb-2"></i>
-                                <div class="text-xs font-bold">Deep Observability</div>
-                                <p class="text-[10px] text-gray-500 mt-1">Prometheus alerts for CPU > 80%</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-6 border-t border-white/10 bg-white/5 text-center">
-                    <p class="text-[10px] text-gray-600 font-mono italic">"Resilience is built one failure at a time."</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Architecture -->
-        <section id="architecture" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Architecture & <span class="text-gradient">Automated Delivery</span>
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    From manual deployments to a GitOps-inspired CI/CD pipeline
-                </p>
-            </div>
-
-            <div class="glass-card p-8">
-                <div class="mermaid">
-graph LR
-    subgraph Dev [Developer Space]
-    A[Code Commit] --> B[GitHub Actions]
-    end
-
-    subgraph Infra [Private Infrastructure]
-    B -->|Push Image| C[(Private Registry)]
-    C -->|Pull| D(Production Server)
-    D -->|Backup| E[(MinIO S3)]
-    D -.->|Logs| F[Dozzle]
-    end
-
-    style B fill:#bd93f9,color:#282a36,stroke:#bd93f9
-    style C fill:#ff5555,color:#fff,stroke:#ff5555
-    style D fill:#50fa7b,color:#282a36,stroke:#50fa7b
-    style E fill:#ffb86c,color:#282a36,stroke:#ffb86c
-    style F fill:#8be9fd,color:#282a36,stroke:#8be9fd
-                </div>
-            </div>
-        </section>
-
-        <section id="security" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-gradient">Mesh</span> Connectivity
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Bridging Bare-metal and Cloud infrastructure via Tailscale
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass-card p-8" data-aos="fade-right">
-                    <h3 class="text-2xl font-bold mb-6 dracula-cyan">Infrastructure Integration</h3>
+                <div class="glass p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">Size Reduction Results</h3>
                     <div class="space-y-4">
-                        <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-network-wired text-cyan-400"></i>
-                            </div>
+                        <div class="flex justify-between items-center p-4 bg-red-900/20 rounded-xl border-l-4 border-red-500">
                             <div>
-                                <h4 class="font-semibold mb-1">Peer-to-Peer Mesh</h4>
-                                <p class="text-sm text-gray-400">Seamless communication between Bare-metal and VPS nodes.</p>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Backend (Before)</p>
+                                <p class="text-2xl font-black text-red-400">2,000 MB</p>
                             </div>
+                            <i class="fas fa-arrow-down text-3xl text-red-400"></i>
                         </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-id-card text-cyan-400"></i>
-                            </div>
+                        <div class="flex justify-between items-center p-4 bg-green-900/20 rounded-xl border-l-4 border-green-500">
                             <div>
-                                <h4 class="font-semibold mb-1">Identity Based</h4>
-                                <p class="text-sm text-gray-400">Secure access controlled via SSO and identity verification.</p>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Backend (After)</p>
+                                <p class="text-2xl font-black text-green-400">358 MB</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-green-500 font-bold">↓ 82% Reduction</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-route text-cyan-400"></i>
-                            </div>
+                        <div class="flex justify-between items-center p-4 bg-blue-900/20 rounded-xl border-l-4 border-blue-500">
                             <div>
-                                <h4 class="font-semibold mb-1">Dynamic Traversal</h4>
-                                <p class="text-sm text-gray-400">Stable connectivity without public static IP requirements.</p>
+                                <p class="text-xs text-slate-500 uppercase font-bold">Verifier (Python)</p>
+                                <p class="text-xl font-black text-blue-400">786 → 164 MB</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="terminal p-6" data-aos="fade-left">
-                    <div class="flex gap-2 mb-4">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    <div class="space-y-2 text-sm font-mono">
-                        <div class="text-green-400">$ tailscale status</div>
-                        <div class="text-gray-400">
-                            <div>bare-metal-01   100.64.0.5    linux   active</div>
-                            <div>cloud-vps-01     100.64.0.12   linux   active</div>
-                        </div>
-                        <div class="mt-6 text-green-400">$ ping bare-metal-01</div>
-                        <div class="text-gray-400">64 bytes from 100.64.0.5: icmp_seq=1 ttl=64 time=12.4 ms</div>
-                        <div class="mt-6 text-xs text-gray-600 italic text-center">
-                            # Seamless connectivity bridging private environments
+                            <div class="text-right">
+                                <p class="text-xs text-blue-500 font-bold">↓ 79% Reduction</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CVE Security -->
-        <section data-aos="fade-up">
-            <div class="glass-card p-8 md:p-12">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                        <span class="text-gradient">Proactive Security</span> Maintenance
-                    </h2>
-                    <p class="text-xl text-gray-400">Vulnerability Management (CVE-2025-66478)</p>
-                </div>
-
+        <section class="space-y-12">
+            <h2 class="text-4xl font-black text-center uppercase tracking-tight">Deployment <span class="text-blue-500">Platform</span></h2>
+            <div class="glass p-10 rounded-[3rem] border-l-4 border-blue-600">
+                <h3 class="text-xl font-bold mb-6 text-blue-400 uppercase tracking-wider">Centralized GitOps Workflow</h3>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-2xl font-bold mb-6 dracula-red">Emergency Patching</h3>
-                        <div class="space-y-4 text-gray-400">
-                            <p><strong class="text-red-400">The Threat:</strong> Remote Code Execution (CVSS 10.0) via RSC protocol deserialization</p>
-                            <p><strong class="text-orange-400">Scope:</strong> 7 Projects identified as vulnerable across the organization</p>
-                            <p><strong class="text-green-400">Resolution:</strong> Upgraded Next.js to 16.0.7+ and rotated critical secrets</p>
-                        </div>
+                        <h4 class="text-sm font-bold text-slate-400 uppercase mb-3">How It Works</h4>
+                        <ol class="space-y-3 text-slate-400 text-sm">
+                            <li class="flex gap-3">
+                                <span class="text-blue-500 font-bold">1.</span>
+                                <span>Developer pushes code to GitHub repository</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-blue-500 font-bold">2.</span>
+                                <span>GitHub Actions builds Docker image and pushes to registry</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-blue-500 font-bold">3.</span>
+                                <span>Platform API receives commit SHA via POST request</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-blue-500 font-bold">4.</span>
+                                <span>DevOps triggers deployment via platform UI</span>
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-blue-500 font-bold">5.</span>
+                                <span>Ansible playbook SSHs into server, runs docker-compose pull & up</span>
+                            </li>
+                        </ol>
                     </div>
-
-                    <div class="glass-card p-6 bg-red-900/10 border-red-500/30">
-                        <div class="text-xs font-mono text-red-400 mb-4">⚠ SECURITY ADVISORY</div>
-                        <p class="text-gray-300 italic mb-4">
-                            "Successfully exploiting this vulnerability allows attackers to execute system commands and access sensitive environment variables."
-                        </p>
-                        <div class="text-right text-sm text-gray-500">— Next.js Security Team</div>
+                    <div class="bg-black/40 p-6 rounded-xl font-mono text-xs">
+                        <div class="text-green-400 mb-2"># GitHub Actions Workflow</div>
+                        <pre class="text-slate-300 overflow-x-auto">
+<span class="text-blue-400">- name:</span> Sync with Platform
+  <span class="text-blue-400">run:</span> |
+    curl -X POST \
+      -H "Authorization: Bearer $PAT" \
+      "$PLATFORM_URL/image-names/\
+      $PROJECT/$IMAGE/${{ github.sha }}"
+</pre>
+                        <div class="mt-4 text-purple-400 mb-2"># Result: Automated deployment</div>
+                        <pre class="text-slate-300">
+✓ Image pulled: sha-abc123
+✓ Containers restarted
+✓ Health check: PASSED
+</pre>
                     </div>
+                </div>
+                <div class="mt-6 bg-yellow-900/20 p-4 rounded-xl border-l-4 border-yellow-500">
+                    <p class="text-sm text-slate-400"><strong class="text-yellow-400">Impact:</strong> Migrated 11 services (elective-management, NPTEL, mail-service, auth, ticketing, ICAIC, mentor-mentee, etc.) to this platform, eliminating manual SSH deployments.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Backups -->
-        <section data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Automated <span class="text-gradient">Incremental Backups</span>
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Bash-based snapshot system using rsync hard-links
-                </p>
+        <section id="results" class="glass p-12 rounded-[3.5rem] border-t-4 border-green-500">
+            <h2 class="text-3xl font-black mb-12 text-center uppercase tracking-tight">Results & <span class="text-green-500">Impact</span></h2>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="h-80"><canvas id="resultsChart"></canvas></div>
+                <div class="space-y-6">
+                    <div class="p-6 rounded-2xl bg-white/5 flex justify-between items-center border border-white/10 shadow-inner">
+                        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Image Size Reduction</span>
+                        <span class="text-green-400 font-mono font-black text-3xl">82%</span>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 flex justify-between items-center border border-white/10 shadow-inner">
+                        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Services Migrated</span>
+                        <span class="text-blue-400 font-mono font-black text-3xl">11+</span>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 flex justify-between items-center border border-white/10 shadow-inner">
+                        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Deployment Time</span>
+                        <span class="text-purple-400 font-mono font-black text-3xl">~3 min</span>
+                    </div>
+                    <p class="text-slate-500 text-sm italic text-justify leading-relaxed">
+                        Optimized container images reduced infrastructure costs, enabled successful deployment of NPTEL platform (previously blocked by size limits), and delivered production-ready conference website (ICAIC) with automated CI/CD.
+                    </p>
+                </div>
             </div>
+        </section>
 
+        <section class="space-y-8">
+            <h2 class="text-3xl font-black text-center uppercase tracking-tight">Additional <span class="text-blue-500">Projects</span></h2>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="code-block" data-aos="fade-right">
-                    <button class="copy-btn">Copy</button>
-                    <pre class="text-sm text-gray-300 overflow-x-auto"><code><span class="dracula-pink"># The Core Logic</span>
-<span class="dracula-pink"># --link-dest creates hard links to PREVIOUS</span>
-<span class="dracula-pink"># 0% Storage use for unchanged files.</span>
-
-rsync <span class="dracula-cyan">-avz</span> <span class="dracula-orange">--delete</span> \
-  <span class="dracula-orange">--link-dest=</span>../latest \
-  /source/data/ \
-  /backups/snapshot-<span class="dracula-yellow">$(date +%F-%H%M)</span>/</code></pre>
-                </div>
-
-                <div id="storage-app" class="glass-card p-8" data-aos="fade-left">
-                    <h3 class="text-2xl font-bold mb-6 dracula-green">Projected Efficiency</h3>
-                    <div class="mb-6">
-                        <label class="block text-sm text-gray-400 mb-2">Days: {{ days }}</label>
-                        <input type="range" v-model="days" min="7" max="90" class="w-full">
-                    </div>
-                    <div class="space-y-4">
-                        <div class="stat-card">
-                            <div class="text-sm text-gray-400 mb-1">Traditional Approach</div>
-                            <div class="stat-number">{{ totalSize }}GB</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="text-sm text-gray-400 mb-1">With Hard Links</div>
-                            <div class="stat-number text-green-400">{{ savedSize }}GB</div>
-                        </div>
-                        <div class="text-center text-green-400 font-bold text-xl">
-                            {{ Math.round((1 - savedSize / totalSize) * 100) }}% Saved
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Observability -->
-        <section data-aos="fade-up">
-            <div class="glass-card p-8 md:p-12">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                        Real-Time <span class="text-gradient">Monitoring</span>
-                    </h2>
-                    <p class="text-xl text-gray-400">High-performance log visibility with Dozzle</p>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-6 dracula-cyan">Key Features</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-magic text-cyan-400 mt-1"></i>
-                                <div>
-                                    <h4 class="font-semibold mb-1">Zero Configuration</h4>
-                                    <p class="text-sm text-gray-400">Automatically discovers all running containers</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-stream text-cyan-400 mt-1"></i>
-                                <div>
-                                    <h4 class="font-semibold mb-1">Log Streaming</h4>
-                                    <p class="text-sm text-gray-400">Real-time visibility into application behavior</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-microchip text-cyan-400 mt-1"></i>
-                                <div>
-                                    <h4 class="font-semibold mb-1">Resource Efficient</h4>
-                                    <p class="text-sm text-gray-400">Extremely low memory footprint</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-4">
-                                <i class="fas fa-lock text-cyan-400 mt-1"></i>
-                                <div>
-                                    <h4 class="font-semibold mb-1">Security</h4>
-                                    <p class="text-sm text-gray-400">Access restricted via Tailscale VPN</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-card p-4 bg-black/40">
-                        <img src="dozzle_screenshot.png" alt="Dozzle Screenshot" class="w-full h-auto rounded-lg mb-4">
-                        <div class="text-center">
-                            <p class="text-sm text-gray-400">Dozzle Interface</p>
-                            <p class="text-xs text-gray-600 mt-2">Real-time container log dashboard</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Resource Limits -->
-        <section data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Governance: <span class="text-gradient">Resource Limits</span>
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div data-aos="fade-right">
-                    <h3 class="text-2xl font-bold mb-4 dracula-red">Vulnerable Config (Legacy)</h3>
-                    <div class="code-block">
-                        <pre class="text-sm text-gray-300"><code><span class="dracula-cyan">services:</span>
-  <span class="dracula-green">student-portal:</span>
-    <span class="dracula-yellow">image:</span> sdc/portal:latest
-    <span class="dracula-pink"># No resource constraints</span>
-    <span class="dracula-pink"># One bug can take down the whole host</span></code></pre>
-                    </div>
-                </div>
-
-                <div data-aos="fade-left">
-                    <h3 class="text-2xl font-bold mb-4 dracula-green">Resilient Config (Current)</h3>
-                    <div class="code-block">
-                        <pre class="text-sm text-gray-300"><code><span class="dracula-cyan">services:</span>
-  <span class="dracula-green">student-portal:</span>
-    <span class="dracula-yellow">image:</span> sdc/portal:latest
-    <span class="dracula-yellow">deploy:</span>
-      <span class="dracula-yellow">resources:</span>
-        <span class="dracula-orange">limits:</span>
-          <span class="dracula-cyan">cpus:</span> <span class="dracula-green">'0.50'</span>     <span class="dracula-pink"># HARD CAP: 50% of 1 core</span>
-          <span class="dracula-cyan">memory:</span> <span class="dracula-green">512M</span>      <span class="dracula-pink"># OOM Kill if exceeded</span>
-        <span class="dracula-orange">reservations:</span>
-          <span class="dracula-cyan">cpus:</span> <span class="dracula-green">'0.10'</span>
-          <span class="dracula-cyan">memory:</span> <span class="dracula-green">128M</span></code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 mt-8 bg-yellow-900/10 border-yellow-500/30" data-aos="fade-up">
-                <p class="text-gray-300">
-                    <strong class="text-yellow-400">Kernel Level:</strong> Uses Linux <code class="text-yellow-400 font-mono text-sm">cgroups</code> to throttle malicious or buggy processes without crashing the OS
-                </p>
-            </div>
-        </section>
-
-        <!-- Storage Modernization -->
-        <section data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Storage <span class="text-gradient">Modernization</span>
-                </h2>
-                <p class="text-xl text-gray-400">MinIO Object Storage Migration</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass-card p-8" data-aos="fade-right">
-                    <h3 class="text-2xl font-bold mb-6 dracula-red">The Problem</h3>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span>Hard to scale</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span>Single Point of Failure</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1"></i>
-                            <span>Inefficient for active files</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="glass-card p-8" data-aos="fade-left">
-                    <h3 class="text-2xl font-bold mb-6 dracula-green">MinIO Solution</h3>
-                    <ul class="space-y-3 text-gray-400">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Immutable:</strong> WORM locking</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>S3 API:</strong> Cloud Native standard</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-green-400 mt-1"></i>
-                            <span><strong>Decoupled:</strong> High availability</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Results -->
-        <section id="results" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Reliability <span class="text-gradient">Metrics</span>
-                </h2>
-                <p class="text-xl text-gray-400">Quantifying the impact of engineering changes</p>
-            </div>
-
-            <div class="glass-card p-8">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="border-b border-white/10">
-                            <th class="pb-4 font-bold text-cyan-400">Metric</th>
-                            <th class="pb-4 font-bold text-cyan-400">Definition</th>
-                            <th class="pb-4 font-bold text-cyan-400">Before</th>
-                            <th class="pb-4 font-bold text-cyan-400">After</th>
-                            <th class="pb-4 font-bold text-cyan-400">Improvement</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b border-white/5">
-                            <td class="py-4 font-bold">RPO</td>
-                            <td class="py-4 text-gray-400">Recovery Point Objective</td>
-                            <td class="py-4 text-red-400">24 Hours</td>
-                            <td class="py-4 text-green-400 font-bold">1 Hour</td>
-                            <td class="py-4 text-purple-400 font-bold">24x Better</td>
-                        </tr>
-                        <tr class="border-b border-white/5">
-                            <td class="py-4 font-bold">RTO</td>
-                            <td class="py-4 text-gray-400">Recovery Time Objective</td>
-                            <td class="py-4 text-red-400">~4 Hours</td>
-                            <td class="py-4 text-green-400 font-bold">&lt; 5 Mins</td>
-                            <td class="py-4 text-purple-400 font-bold">48x Faster</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 font-bold">Uptime</td>
-                            <td class="py-4 text-gray-400">Availability</td>
-                            <td class="py-4 text-red-400">92%</td>
-                            <td class="py-4 text-green-400 font-bold">99.9%</td>
-                            <td class="py-4 text-purple-400 font-bold">High Availability</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Tech Stack -->
-        <section data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Technology <span class="text-gradient">Stack</span>
-                </h2>
-            </div>
-
-            <div class="flex flex-wrap justify-center gap-4">
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="0">
-                    <i class="fab fa-docker mr-2"></i>Docker
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="50">
-                    <i class="fab fa-github mr-2"></i>GitHub Actions
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="100">
-                    <i class="fas fa-network-wired mr-2"></i>Tailscale
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="150">
-                    <i class="fas fa-database mr-2"></i>MinIO
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="200">
-                    <i class="fas fa-terminal mr-2"></i>Bash
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="250">
-                    <i class="fas fa-sync mr-2"></i>rsync
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="300">
-                    <i class="fas fa-chart-line mr-2"></i>Dozzle
-                </span>
-                <span class="tech-pill" data-aos="zoom-in" data-aos-delay="350">
-                    <i class="fab fa-linux mr-2"></i>Ubuntu 24
-                </span>
-            </div>
-        </section>
-
-        <!-- Terminal Simulator -->
-        <section id="terminal-sim" data-aos="fade-up">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Live <span class="text-gradient">CI/CD Pipeline</span>
-                </h2>
-                <p class="text-xl text-gray-400">Watch the automated deployment in action</p>
-            </div>
-
-            <div class="terminal max-w-4xl mx-auto">
-                <div class="flex items-center justify-between p-4 border-b border-white/10">
-                    <div class="flex gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    <span class="text-xs text-gray-500 font-mono">deployment.log</span>
-                    <button @click="runSimulation" :disabled="isRunning" class="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 text-xs hover:bg-cyan-500/30 transition-colors disabled:opacity-50">
-                        <i class="fas fa-redo mr-1"></i>Replay
-                    </button>
-                </div>
-                <div class="p-6 h-96 overflow-y-auto space-y-2">
-                    <div v-for="log in logs" :key="log.id" class="flex gap-4 items-start fade-in-up">
-                        <span class="text-gray-600 text-xs font-mono">{{ log.time }}</span>
-                        <span class="text-gray-300 text-sm" :class="log.type" v-html="log.text"></span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chaos Engineering Simulator -->
-        <section id="chaos-sim" data-aos="fade-up">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-gradient">Chaos</span> Simulator
-                </h2>
-                <p class="text-xl text-gray-400">Test the infrastructure's self-healing capabilities</p>
-            </div>
-
-            <div id="chaos-app" class="glass-card p-8 md:p-12">
-                <div class="flex flex-wrap justify-center gap-8 mb-12">
-                    <div v-for="service in services" :key="service.name"
-                         class="relative group w-40 p-6 rounded-2xl border transition-all duration-500"
-                         :class="service.status === 'healthy' ? 'border-green-500/30 bg-green-500/5' :
-                                 service.status === 'failed' ? 'border-red-500/50 bg-red-500/10 animate-pulse' :
-                                 'border-yellow-500/50 bg-yellow-500/10'">
-
-                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
-                             :class="service.status === 'healthy' ? 'bg-green-500' :
-                                     service.status === 'failed' ? 'bg-red-500' : 'bg-yellow-500'">
-                            <i class="fas" :class="service.status === 'healthy' ? 'fa-check' :
-                                                  service.status === 'failed' ? 'fa-bolt' : 'fa-sync fa-spin'"></i>
-                        </div>
-
-                        <div class="text-center">
-                            <i class="fas text-4xl mb-4" :class="[service.icon, service.status === 'healthy' ? 'text-green-400' : 'text-gray-400']"></i>
-                            <h4 class="font-bold text-sm uppercase tracking-wider mb-1">{{ service.name }}</h4>
-                            <div class="text-[10px] font-mono opacity-60">{{ service.id }}</div>
-                        </div>
-
-                        <!-- Progress Bar for Healing -->
-                        <div v-if="service.status === 'healing'" class="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full bg-yellow-400 transition-all duration-[2000ms]" :style="{ width: healingProgress + '%' }"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button @click="triggerChaos" :disabled="isChaosRunning"
-                            class="px-8 py-4 rounded-xl font-bold transition-all group relative overflow-hidden"
-                            :class="isChaosRunning ? 'bg-gray-800 text-gray-500' : 'bg-red-500 text-white hover:bg-red-600 hover:scale-105'">
-                        <span class="relative z-10">
-                            <i class="fas fa-biohazard mr-2"></i>
-                            {{ isChaosRunning ? 'System Recovering...' : 'Trigger Random Failure' }}
-                        </span>
-                        <div v-if="!isChaosRunning" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    </button>
-
-                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
-                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
-                            <span class="text-xs font-mono">Detection: {{ stats.detectionTime }}ms</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
-                            <span class="text-xs font-mono">Recovery: {{ stats.recoveryTime }}ms</span>
-                        </div>
-                        <div class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full" :class="isChaosRunning ? 'bg-yellow-500' : 'bg-green-500'"></div>
-                            <span class="text-xs font-mono">Status: {{ isChaosRunning ? 'HEALING' : 'STABLE' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Roadmap -->
-        <section id="roadmap" data-aos="fade-up">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                    Future <span class="text-gradient">Roadmap</span>
-                </h2>
-            </div>
-
-            <div class="max-w-4xl mx-auto space-y-8">
-                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right">
-                    <div class="flex items-start gap-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-500/50">
-                            <i class="fas fa-lock text-2xl text-white"></i>
-                        </div>
+                <div class="glass p-8 rounded-3xl border-b-4 border-blue-600">
+                    <div class="flex items-center gap-4 mb-4">
+                        <i class="fas fa-graduation-cap text-blue-500 text-3xl"></i>
                         <div>
-                            <h4 class="text-2xl font-bold mb-2 dracula-accent">Phase 1: Immutable Backups</h4>
-                            <p class="text-gray-400">Enable Object Locking (Governance Mode) on MinIO for ransomware protection</p>
+                            <h3 class="font-black text-xl">ICAIC 2026</h3>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">International Conference Website</p>
                         </div>
                     </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Full-stack conference management platform built with modern web technologies. Handled registration, paper submissions, and event logistics.
+                    </p>
+                    <a href="https://icaic.in" target="_blank" class="text-blue-400 text-sm font-bold hover:underline">Visit Live Site →</a>
                 </div>
-
-                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="100">
-                    <div class="flex items-start gap-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/50">
-                            <i class="fas fa-bolt text-2xl text-white"></i>
-                        </div>
+                <div class="glass p-8 rounded-3xl border-b-4 border-purple-600">
+                    <div class="flex items-center gap-4 mb-4">
+                        <i class="fas fa-chart-line text-purple-500 text-3xl"></i>
                         <div>
-                            <h4 class="text-2xl font-bold mb-2 dracula-orange">Phase 2: Chaos Engineering</h4>
-                            <p class="text-gray-400">Implementing "Chaos Monkey" testing for self-healing verification</p>
+                            <h3 class="font-black text-xl">Observability</h3>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider">Real-time Monitoring Dashboard</p>
                         </div>
                     </div>
-                </div>
-
-                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="200">
-                    <div class="flex items-start gap-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-cyan-500/50">
-                            <i class="fas fa-globe text-2xl text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-bold mb-2 dracula-cyan">Phase 3: Multi-Region</h4>
-                            <p class="text-gray-400">Automated regional failover and geographic replication</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-8 relative timeline-item" data-aos="fade-right" data-aos-delay="300">
-                    <div class="flex items-start gap-6">
-                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-green-500/50">
-                            <i class="fas fa-shield text-2xl text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-2xl font-bold mb-2 dracula-green">Phase 4: Security Guardrails</h4>
-                            <p class="text-gray-400">Automate dependency patching (Renovate/Dependabot) to prevent zero-day exposure</p>
-                        </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Deployed Dozzle for centralized log streaming across all containers. Zero-config, lightweight alternative to heavy logging stacks.
+                    </p>
+                    <div class="bg-black/40 rounded-lg overflow-hidden">
+                        <img src="/dozzle_screenshot.png" alt="Dozzle Dashboard" class="w-full opacity-80 hover:opacity-100 transition">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Conclusion -->
-        <section class="text-center py-24" data-aos="fade-up">
-            <h2 class="text-5xl md:text-6xl font-bold mb-8">
-                <span class="text-gradient">Resilience</span> is not a product
-            </h2>
-            <p class="text-3xl md:text-4xl font-light text-gray-400 mb-16">
-                It is an <span class="text-purple-400 font-semibold">architectural choice</span>
-            </p>
-            <div class="text-2xl font-light text-gray-500 mb-8">Thank You</div>
-            <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="inline-flex items-center gap-3 text-pink-400 font-mono hover:text-pink-300 transition-colors">
-                <i class="fab fa-github"></i>
-                github.com/vinayaktyagi10/pbl_project
-            </a>
+        <section id="team" class="text-center pt-10 border-t border-slate-900">
+            <h2 class="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-12">Academic Credits</h2>
+            <div class="flex flex-wrap justify-center gap-10">
+                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-blue-600">
+                    <p class="text-[9px] font-bold text-blue-500 mb-2 uppercase tracking-widest">Project Guide</p>
+                    <p class="font-black text-xl text-slate-100">Dr. Dibakar Sinha</p>
+                </div>
+                <div class="glass px-12 py-8 rounded-[2rem] border-b-4 border-slate-700">
+                    <p class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Student</p>
+                    <p class="font-black text-xl text-slate-100">Vinayak Tyagi</p>
+                    <p class="text-[10px] text-slate-500 mt-1">2427030346</p>
+                </div>
+            </div>
         </section>
-
     </main>
 
-    <!-- Footer -->
-    <footer class="py-24 text-center border-t border-white/5 bg-black/40">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="flex justify-center items-center gap-6 mb-6">
-                <img src="sdc_logo.jpg" alt="SDC Logo" class="h-12 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg">
-                <img src="muj_logo.png" alt="MUJ Logo" class="h-10 w-auto rounded-lg border border-black/10 dark:border-white/10 shadow-lg bg-white p-1.5">
-            </div>
-            <h2 class="text-4xl font-bold mb-4">
-                <span class="text-gradient">SDC Infrastructure Team</span>
-            </h2>
-            <p class="text-sm text-gray-500 mb-12 uppercase tracking-widest">
-                PBL Semester 4 Project by <span class="text-pink-400 font-bold">Vinayak Tyagi</span>
-            </p>
-            <div class="flex flex-wrap justify-center gap-8 md:gap-16 mb-12">
-                <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="group flex flex-col items-center">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-purple-500/30 group-hover:shadow-lg group-hover:shadow-purple-500/50">
-                        <i class="fab fa-github text-2xl text-purple-400"></i>
-                    </div>
-                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-purple-400 transition-colors">Repository</span>
-                </a>
-                <a href="./slides" class="group flex flex-col items-center">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-cyan-500/30 group-hover:shadow-lg group-hover:shadow-cyan-500/50">
-                        <i class="fas fa-play text-2xl text-cyan-400"></i>
-                    </div>
-                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-cyan-400 transition-colors">Slides</span>
-                </a>
-                <a href="https://github.com/vinayaktyagi10/pbl_project#readme" target="_blank" class="group flex flex-col items-center">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-cyan-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-green-500/30 group-hover:shadow-lg group-hover:shadow-green-500/50">
-                        <i class="fas fa-book text-2xl text-green-400"></i>
-                    </div>
-                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-green-400 transition-colors">Docs</span>
-                </a>
-                <a href="https://github.com/vinayaktyagi10" target="_blank" class="group flex flex-col items-center">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-orange-500/30 group-hover:shadow-lg group-hover:shadow-orange-500/50">
-                        <i class="fas fa-user-astronaut text-2xl text-orange-400"></i>
-                    </div>
-                    <span class="text-xs uppercase font-bold text-gray-500 tracking-widest group-hover:text-orange-400 transition-colors">Author</span>
-                </a>
-            </div>
-            <p class="text-xs font-mono text-gray-700 uppercase tracking-[0.5em]">Resilience • Security • Automation • 2026</p>
+    <footer class="py-12 text-center bg-black/40 border-t border-slate-900">
+        <p class="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase mb-2">Manipal University Jaipur</p>
+        <p class="text-slate-500 text-[9px] font-medium tracking-[0.2em] uppercase opacity-50">Department of Computer Science & Engineering • 2026</p>
+        <div class="mt-4">
+            <a href="https://github.com/vinayaktyagi10/pbl_project" target="_blank" class="text-blue-400 text-xs hover:underline">GitHub Repository</a>
         </div>
     </footer>
 
-    <!-- Timer UI -->
-    <div id="timer-app" :class="timerClass">
-        <div class="timer-card">
-            <div class="timer-pulse"></div>
-            <div>
-                <div class="timer-label">Session Time</div>
-                <div class="timer-display">{{ formattedTime }}</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top">
-        <i class="fas fa-arrow-up text-xl"></i>
-    </button>
-
-    <!-- Scripts -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.querySelector('.page-loader').classList.add('hidden');
-            }, 1500);
-        });
-
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let mouse = { x: null, y: null, radius: 150 };
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.5 - 0.25;
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.color = `rgba(${Math.random() > 0.5 ? '189, 147, 249' : '139, 233, 253'}, ${Math.random() * 0.5 + 0.2})`;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-
-                if (mouse.x && mouse.y) {
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < mouse.radius) {
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        const angle = Math.atan2(dy, dx);
-                        this.x -= Math.cos(angle) * force * 2;
-                        this.y -= Math.sin(angle) * force * 2;
-                    }
-                }
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            const numberOfParticles = Math.min((canvas.width * canvas.height) / 30000, 60);
-            for (let i = 0; i < numberOfParticles; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function connectParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 100) {
-                        ctx.strokeStyle = `rgba(189, 147, 249, ${0.08 - distance / 1000})`;
-                        ctx.lineWidth = 0.4;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animateParticles() {
-            if (document.hidden) {
-                requestAnimationFrame(animateParticles);
-                return;
-            }
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            connectParticles();
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
-
-        document.querySelectorAll('[data-tilt]').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                const rotateX = (y - centerY) / 10;
-                const rotateY = (centerX - x) / 10;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-            });
-        });
-
-        const themeToggle = document.getElementById('theme-toggle');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        const html = document.documentElement;
-
-        function toggleTheme() {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-
-            const icon = newTheme === 'light' ? 'fa-sun' : 'fa-moon';
-            document.querySelectorAll('.theme-toggle-slider i').forEach(i => {
-                i.className = `fas ${icon}`;
-            });
-        }
-
-        themeToggle.addEventListener('click', toggleTheme);
-        mobileThemeToggle.addEventListener('click', toggleTheme);
-
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-        if (savedTheme === 'light') {
-            document.querySelectorAll('.theme-toggle-slider i').forEach(i => {
-                i.className = 'fas fa-sun';
-            });
-        }
-
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100,
-            easing: 'ease-out-cubic'
-        });
-
-        const { createApp, ref, computed, onMounted } = Vue;
-
-        // Terminal Simulator
-        createApp({
-            setup() {
-                const logs = ref([]);
-                const isRunning = ref(false);
-                let logId = 0;
-
-                const addLog = (text, type = '', delay = 1000) => {
-                    return new Promise(resolve => {
-                        setTimeout(() => {
-                            const now = new Date();
-                            logs.value.push({
-                                id: logId++,
-                                time: now.toTimeString().split(' ')[0],
-                                text: text,
-                                type: type
-                            });
-                            const el = document.querySelector('#terminal-sim .p-6');
-                            if (el) el.scrollTop = el.scrollHeight;
-                            resolve();
-                        }, delay);
-                    });
-                };
-
-                const runSimulation = async () => {
-                    if (isRunning.value) return;
-                    isRunning.value = true;
-                    logs.value = [];
-                    await addLog('GHA: Initializing PBL Workflow...', 'dracula-cyan', 500);
-                    await addLog('GHA: Running Security Scan...', '', 1200);
-                    await addLog('<span class="dracula-green">✓ No Critical CVEs found.</span>', '', 400);
-                    await addLog('GHA: Building Docker Image...', 'dracula-orange', 1500);
-                    await addLog('GHA: Pushing to SDC Registry...', '', 1000);
-                    await addLog('GHA: Executing Remote Deploy...', 'dracula-cyan', 1200);
-                    await addLog('<span class="dracula-green font-bold tracking-tighter uppercase">SYSTEM FUNCTIONAL & SECURE</span>', 'text-lg', 800);
-                    isRunning.value = false;
-                };
-
-                onMounted(() => { runSimulation(); });
-                return { logs, isRunning, runSimulation };
-            }
-        }).mount('#terminal-sim');
-
-        // Storage Calculator
-        createApp({
-            setup() {
-                const days = ref(30);
-                const totalSize = computed(() => days.value * 50);
-                const savedSize = computed(() => (50 + (days.value - 1) * 0.2).toFixed(1));
-                return { days, totalSize, savedSize };
-            }
-        }).mount('#storage-app');
-
-        // Chaos Simulator
-        createApp({
-            setup() {
-                const services = ref([
-                    { name: 'Gateway', id: 'sdc-gw-01', status: 'healthy', icon: 'fa-network-wired' },
-                    { name: 'Auth API', id: 'sdc-auth-04', status: 'healthy', icon: 'fa-user-shield' },
-                    { name: 'Database', id: 'sdc-db-main', status: 'healthy', icon: 'fa-database' },
-                    { name: 'Storage', id: 'sdc-minio-01', status: 'healthy', icon: 'fa-cloud' }
-                ]);
-
-                const isChaosRunning = ref(false);
-                const healingProgress = ref(0);
-                const stats = ref({ detectionTime: 0, recoveryTime: 0 });
-
-                const triggerChaos = async () => {
-                    if (isChaosRunning.value) return;
-                    isChaosRunning.value = true;
-
-                    // 1. Random Failure
-                    const index = Math.floor(Math.random() * services.value.length);
-                    services.value[index].status = 'failed';
-                    stats.value.detectionTime = 0;
-                    stats.value.recoveryTime = 0;
-
-                    // 2. Detection Phase
-                    await new Promise(r => setTimeout(r, 800));
-                    stats.value.detectionTime = Math.floor(Math.random() * 200) + 100;
-                    services.value[index].status = 'healing';
-
-                    // 3. Recovery Phase
-                    const startTime = Date.now();
-                    healingProgress.value = 0;
-                    const interval = setInterval(() => {
-                        healingProgress.value += 5;
-                        if (healingProgress.value >= 100) clearInterval(interval);
-                    }, 100);
-
-                    await new Promise(r => setTimeout(r, 2000));
-                    stats.value.recoveryTime = Date.now() - startTime;
-                    services.value[index].status = 'healthy';
-                    isChaosRunning.value = false;
-                };
-
-                return { services, isChaosRunning, triggerChaos, healingProgress, stats };
-            }
-        }).mount('#chaos-app');
-
-        // Session Timer
-        createApp({
-            setup() {
-                const timeLeft = ref(600); // 10 minutes
+        // TIMER LOGIC
+        let sec = 0;
+        let timer = null;
+        function startTimer() {
+            timer = setInterval(() => {
+                sec++;
+                let m = Math.floor(sec / 60);
+                let s = sec % 60;
+                document.getElementById('displayTime').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                 
-                const formattedTime = computed(() => {
-                    const mins = Math.floor(timeLeft.value / 60);
-                    const secs = timeLeft.value % 60;
-                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                });
-
-                const timerClass = computed(() => {
-                    if (timeLeft.value <= 10) return 'timer-critical';
-                    if (timeLeft.value <= 60) return 'timer-warning';
-                    return '';
-                });
-
-                onMounted(() => {
-                    const interval = setInterval(() => {
-                        if (timeLeft.value > 0) timeLeft.value--;
-                        else clearInterval(interval);
-                    }, 1000);
-                });
-
-                return { formattedTime, timerClass };
-            }
-        }).mount('#timer-app');
-
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const closeMenuBtn = document.getElementById('close-menu-btn');
-        const backToTopBtn = document.getElementById('back-to-top');
-
-        // Modal Logic
-        const openModalBtn = document.getElementById('open-postmortem');
-        const closeModalBtn = document.getElementById('close-postmortem');
-        const modal = document.getElementById('postmortem-modal');
-        const modalOverlay = document.getElementById('close-modal-overlay');
-
-        const toggleModal = (show) => {
-            if (show) {
-                modal.classList.remove('pointer-events-none', 'opacity-0');
-                modal.querySelector('.glass-card').classList.remove('scale-95');
-                document.body.style.overflow = 'hidden';
-            } else {
-                modal.classList.add('pointer-events-none', 'opacity-0');
-                modal.querySelector('.glass-card').classList.add('scale-95');
-                document.body.style.overflow = '';
-            }
-        };
-
-        if (openModalBtn) openModalBtn.addEventListener('click', () => toggleModal(true));
-        if (closeModalBtn) closeModalBtn.addEventListener('click', () => toggleModal(false));
-        if (modalOverlay) modalOverlay.addEventListener('click', () => toggleModal(false));
-
-        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
-        closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('active'));
-        document.querySelectorAll('.mobile-nav-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('active')));
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 500) backToTopBtn.classList.add('visible');
-            else backToTopBtn.classList.remove('visible');
-
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            const scrollProgress = document.getElementById("scroll-progress");
-            if (scrollProgress) scrollProgress.style.width = scrolled + "%";
-
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-link');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 200) {
-                    current = section.getAttribute('id');
+                if (sec >= 480 && sec < 600) {
+                    document.getElementById('timerContainer').classList.add('timer-warning');
+                    document.getElementById('timerIcon').classList.replace('fa-hourglass-start', 'fa-hourglass-half');
+                } else if (sec >= 600) {
+                    clearInterval(timer);
+                    document.getElementById('timerContainer').classList.replace('timer-warning', 'timer-stop');
+                    document.getElementById('displayTime').innerText = "10:00";
+                    document.getElementById('timerIcon').classList.replace('fa-hourglass-half', 'fa-hourglass-end');
                 }
-            });
+            }, 1000);
+        }
 
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
+        // RESULTS CHART
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Backend (Before)', 'Backend (After)', 'Verifier (Before)', 'Verifier (After)'],
+                datasets: [{
+                    label: 'Image Size (MB)',
+                    data: [2000, 358, 786, 164],
+                    backgroundColor: ['#ef4444', '#22c55e', '#ef4444', '#22c55e'],
+                    borderRadius: 15,
+                    barThickness: 60
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' MB';
+                            }
+                        }
+                    }
+                },
+                scales: { 
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#ffffff05' }, 
+                        ticks: { color: '#475569' }
+                    },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { color: '#475569', font: { size: 10 } }
+                    }
                 }
-            });
-        });
-
-        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'base',
-            themeVariables: {
-                darkMode: true,
-                background: 'transparent',
-                mainBkg: '#383a59',
-                nodeBorder: '#bd93f9',
-                lineColor: '#f8f8f2',
-                primaryColor: '#bd93f9',
-                secondaryColor: '#50fa7b',
-                tertiaryColor: '#ff79c6'
-            }
-        });
-
-        document.querySelectorAll('.code-block').forEach(block => {
-            const button = block.querySelector('.copy-btn');
-            if (button) {
-                button.onclick = () => {
-                    const code = block.querySelector('pre').innerText;
-                    navigator.clipboard.writeText(code);
-                    button.innerText = 'Copied!';
-                    setTimeout(() => button.innerText = 'Copy', 2000);
-                };
             }
         });
     </script>
