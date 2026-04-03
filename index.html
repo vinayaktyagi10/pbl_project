@@ -6,25 +6,135 @@
     <title>Production Infrastructure Automation | PBL 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontSize: {
+                        'xs': ['0.875rem', { lineHeight: '1.5' }],
+                        'sm': ['1rem', { lineHeight: '1.6' }],
+                        'base': ['1.125rem', { lineHeight: '1.7' }],
+                        'lg': ['1.25rem', { lineHeight: '1.6' }],
+                        'xl': ['1.5rem', { lineHeight: '1.5' }],
+                        '2xl': ['1.875rem', { lineHeight: '1.4' }],
+                        '3xl': ['2.25rem', { lineHeight: '1.3' }],
+                        '4xl': ['3rem', { lineHeight: '1.2' }],
+                        '5xl': ['3.75rem', { lineHeight: '1.1' }],
+                        '6xl': ['4.5rem', { lineHeight: '1.1' }],
+                        '7xl': ['5.5rem', { lineHeight: '1' }],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
         
-        /* TIMER UI */
-        #timerContainer { background: #ffffff; color: #020617; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 3px solid #3b82f6; z-index: 1000; }
-        @keyframes flicker { 0%, 100% { background-color: #ffffff; } 50% { background-color: #fca5a5; } }
-        .timer-warning { animation: flicker 1s infinite; border: 3px solid #ef4444 !important; color: #b91c1c !important; }
-        .timer-stop { background-color: #991b1b !important; color: #ffffff !important; border: 3px solid #f87171 !important; animation: none; }
+        /* BASE - Projector Optimized */
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            scroll-behavior: smooth;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Higher contrast glass effect */
+        .glass { 
+            background: rgba(30, 41, 59, 0.8); 
+            backdrop-filter: blur(15px); 
+            border: 2px solid rgba(255, 255, 255, 0.2); 
+        }
+        
+        /* Brighter gradient text */
+        .gradient-text { 
+            background: linear-gradient(90deg, #93c5fd, #c4b5fd); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        /* Boost text colors for projector */
+        .text-slate-400 { color: #cbd5e1 !important; }
+        .text-slate-500 { color: #94a3b8 !important; }
+        .text-slate-300 { color: #e2e8f0 !important; }
+        
+        /* Brighter accent colors */
+        .text-blue-400 { color: #93c5fd !important; }
+        .text-blue-500 { color: #60a5fa !important; }
+        .text-purple-400 { color: #c4b5fd !important; }
+        .text-purple-500 { color: #a78bfa !important; }
+        .text-green-400 { color: #86efac !important; }
+        .text-green-500 { color: #4ade80 !important; }
+        .text-orange-400 { color: #fdba74 !important; }
+        .text-orange-500 { color: #fb923c !important; }
+        .text-red-400 { color: #fca5a5 !important; }
+        .text-yellow-400 { color: #fde047 !important; }
+        .text-cyan-500 { color: #22d3ee !important; }
+        
+        /* TIMER UI - Extra visible */
+        #timerContainer { 
+            background: #ffffff; 
+            color: #000000; 
+            box-shadow: 0 10px 50px rgba(0,0,0,0.9); 
+            border: 4px solid #3b82f6; 
+            z-index: 1000; 
+        }
+        @keyframes flicker { 0%, 100% { background-color: #ffffff; } 50% { background-color: #fecaca; } }
+        .timer-warning { animation: flicker 0.8s infinite; border: 4px solid #ef4444 !important; color: #b91c1c !important; }
+        .timer-stop { background-color: #991b1b !important; color: #ffffff !important; border: 4px solid #f87171 !important; animation: none; }
+        
+        /* Code blocks - Larger and more readable */
+        pre { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.9rem; 
+            line-height: 1.6; 
+            font-weight: 500;
+        }
+        code { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 500;
+        }
+        
+        /* Collapsible details */
+        details > summary { cursor: pointer; user-select: none; font-weight: 700; }
+        details > summary:hover { color: #93c5fd; }
+        details[open] > summary { color: #93c5fd; }
+        
+        /* Mermaid theme */
+        .mermaid { background: transparent; }
+        
+        /* Ensure all borders are visible */
+        .border-l-4, .border-r-4, .border-b-4, .border-t-4 { border-width: 5px !important; }
+        
+        /* Larger icons */
+        .fa-3xl { font-size: 2.5rem !important; }
+        
+        /* Boost small text */
+        .text-\[9px\] { font-size: 0.75rem !important; }
+        .text-\[10px\] { font-size: 0.8rem !important; }
+        .text-\[11px\] { font-size: 0.85rem !important; }
+        
+        /* Make bullets more visible */
+        li::marker { color: #60a5fa; font-weight: bold; }
+        
+        /* Larger rounded corners for visibility */
+        .rounded-full { border-radius: 9999px; }
+        
+        /* Print/Projector mode: ensure backgrounds render */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
     </style>
 </head>
 <body onload="startTimer()">
 
-    <div id="timerContainer" class="fixed bottom-10 right-10 px-8 py-4 rounded-3xl flex items-center gap-4 transition-all">
-        <i class="fas fa-hourglass-start text-blue-600 text-2xl" id="timerIcon"></i>
-        <span id="displayTime" class="text-4xl font-black font-mono tracking-tighter">00:00</span>
+    <div id="timerContainer" class="fixed bottom-10 right-10 px-10 py-5 rounded-3xl flex items-center gap-4 transition-all">
+        <i class="fas fa-hourglass-start text-blue-600 text-3xl" id="timerIcon"></i>
+        <span id="displayTime" class="text-5xl font-black font-mono tracking-tighter">00:00</span>
     </div>
 
     <nav class="fixed w-full z-50 glass border-b border-slate-800/50 px-8 py-4 flex justify-between items-center">
@@ -39,6 +149,7 @@
         </div>
         <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-widest font-bold opacity-70">
             <a href="#problem" class="hover:text-blue-400 transition">Problem</a>
+            <a href="#architecture" class="hover:text-blue-400 transition">Architecture</a>
             <a href="#methodology" class="hover:text-blue-400 transition">Methodology</a>
             <a href="#results" class="hover:text-blue-400 transition">Results</a>
             <a href="#team" class="hover:text-blue-400 transition">Team</a>
@@ -81,6 +192,109 @@
             </div>
         </section>
 
+        <!-- NEW: Architecture Diagram -->
+        <section id="architecture" class="space-y-8">
+            <h2 class="text-4xl font-black text-center uppercase tracking-tight">System <span class="text-purple-500">Architecture</span></h2>
+            <div class="glass p-10 rounded-[3rem] border-t-4 border-purple-600">
+                
+                <!-- Row 1: Development & CI/CD (Left to Right) -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3 px-5 py-4 bg-blue-600 rounded-2xl shadow-lg shadow-blue-900/50 min-w-[140px]">
+                        <i class="fas fa-code text-xl"></i>
+                        <span class="font-bold text-base">Code Push</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-slate-700 rounded-2xl shadow-lg min-w-[140px]">
+                        <i class="fab fa-github text-xl"></i>
+                        <span class="font-bold text-base">GitHub</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-slate-500 to-purple-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-purple-600 rounded-2xl shadow-lg shadow-purple-900/50 min-w-[160px]">
+                        <i class="fas fa-cogs text-xl"></i>
+                        <span class="font-bold text-base">GH Actions</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-purple-500 to-orange-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-orange-500 rounded-2xl shadow-lg shadow-orange-900/50 min-w-[150px]">
+                        <i class="fas fa-box text-xl"></i>
+                        <span class="font-bold text-base">Registry</span>
+                    </div>
+                </div>
+
+                <!-- Connector: Down arrow on right side -->
+                <div class="flex justify-end pr-16 mb-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-1 h-12 bg-gradient-to-b from-orange-500 to-green-500"></div>
+                        <i class="fas fa-chevron-down text-green-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Row 2: Deployment Platform (Right to Left) -->
+                <div class="flex items-center justify-between mb-4 flex-row-reverse">
+                    <div class="flex items-center gap-3 px-5 py-4 bg-green-600 rounded-2xl shadow-lg shadow-green-900/50 min-w-[150px]">
+                        <i class="fas fa-satellite-dish text-xl"></i>
+                        <span class="font-bold text-base">Platform API</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-l from-green-500 to-emerald-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-emerald-600 rounded-2xl shadow-lg shadow-emerald-900/50 min-w-[170px]">
+                        <i class="fas fa-desktop text-xl"></i>
+                        <span class="font-bold text-base">Deploy UI</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-l from-emerald-500 to-cyan-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-cyan-600 rounded-2xl shadow-lg shadow-cyan-900/50 min-w-[180px]">
+                        <i class="fas fa-play-circle text-xl"></i>
+                        <span class="font-bold text-base">Trigger Deploy</span>
+                    </div>
+                </div>
+
+                <!-- Connector: Down arrow on left side -->
+                <div class="flex justify-start pl-20 mb-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-yellow-500"></div>
+                        <i class="fas fa-chevron-down text-yellow-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Row 3: Infrastructure (Left to Right) -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3 px-5 py-4 bg-yellow-500 text-black rounded-2xl shadow-lg shadow-yellow-900/50 min-w-[160px]">
+                        <i class="fas fa-terminal text-xl"></i>
+                        <span class="font-bold text-base">Ansible SSH</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-yellow-500 to-amber-500 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-amber-500 text-black rounded-2xl shadow-lg shadow-amber-900/50 min-w-[170px]">
+                        <i class="fas fa-download text-xl"></i>
+                        <span class="font-bold text-base">Docker Pull</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-amber-500 to-green-400 mx-2"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-green-500 text-black rounded-2xl shadow-lg shadow-green-900/50 min-w-[170px]">
+                        <i class="fas fa-server text-xl"></i>
+                        <span class="font-bold text-base">11+ Services</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gradient-to-r from-green-400 to-pink-500 mx-2 opacity-50" style="border-top: 3px dashed #ec4899;"></div>
+                    <div class="flex items-center gap-3 px-5 py-4 bg-pink-600 rounded-2xl shadow-lg shadow-pink-900/50 min-w-[150px]">
+                        <i class="fas fa-chart-line text-xl"></i>
+                        <span class="font-bold text-base">Dozzle Logs</span>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-8 pt-6 border-t border-slate-700 flex justify-center gap-8 text-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                        <span class="text-slate-400">Build Flow</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-1 bg-gradient-to-r from-green-500 to-cyan-500"></div>
+                        <span class="text-slate-400">Deploy Flow</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-1 border-t-2 border-dashed border-pink-500"></div>
+                        <span class="text-slate-400">Monitoring</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="methodology" class="space-y-12">
             <h2 class="text-4xl font-black text-center uppercase tracking-tight">System <span class="text-blue-500">Methodology</span></h2>
             <div class="grid md:grid-cols-3 gap-8">
@@ -103,32 +317,99 @@
             </div>
         </section>
 
+        <!-- Docker Optimization - NPTEL Specific -->
+        <section class="glass p-12 rounded-[3.5rem] border-t-4 border-orange-500">
+            <h2 class="text-3xl font-black mb-4 text-center uppercase tracking-tight">NPTEL Platform <span class="text-orange-500">Optimization</span></h2>
+            <p class="text-slate-400 text-center text-sm mb-8 max-w-3xl mx-auto">
+                The NPTEL certificate verification platform had 2GB+ Docker images that exceeded the deployment platform's build timeout limits. 
+                Multi-stage builds and image optimization were implemented to enable successful deployments.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- BEFORE -->
+                <div class="bg-red-900/10 p-6 rounded-2xl border-l-4 border-red-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-red-400 font-bold uppercase text-sm tracking-wider">❌ Before (2000 MB)</h3>
+                        <span class="px-3 py-1 bg-red-500/20 rounded-full text-xs font-mono text-red-400">BLOATED</span>
+                    </div>
+                    <pre class="bg-black/40 p-4 rounded-xl overflow-x-auto text-xs"><code class="text-slate-300"><span class="text-blue-400">FROM</span> node:22-bookworm
+
+<span class="text-blue-400">WORKDIR</span> /app
+
+<span class="text-gray-500"># Install ALL Chromium dependencies</span>
+<span class="text-blue-400">RUN</span> apt-get update && apt-get install -y \
+  chromium \
+  fonts-liberation \
+  <span class="text-yellow-400">...50+ packages</span>
+
+<span class="text-gray-500"># Install ALL dependencies (dev + prod)</span>
+<span class="text-blue-400">COPY</span> package*.json ./
+<span class="text-blue-400">RUN</span> npm install
+
+<span class="text-blue-400">COPY</span> . .
+<span class="text-blue-400">EXPOSE</span> 5000
+<span class="text-blue-400">CMD</span> ["npm", "start"]</code></pre>
+                    <div class="mt-3 text-xs text-slate-500">
+                        ⚠️ Issues: Full OS image, dev dependencies, test files included
+                    </div>
+                </div>
+
+                <!-- AFTER -->
+                <div class="bg-green-900/10 p-6 rounded-2xl border-l-4 border-green-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-green-400 font-bold uppercase text-sm tracking-wider">✓ After (358 MB)</h3>
+                        <span class="px-3 py-1 bg-green-500/20 rounded-full text-xs font-mono text-green-400">OPTIMIZED</span>
+                    </div>
+                    <pre class="bg-black/40 p-4 rounded-xl overflow-x-auto text-xs"><code class="text-slate-300"><span class="text-purple-400"># Stage 1: Builder</span>
+<span class="text-blue-400">FROM</span> node:22-slim <span class="text-purple-400">AS builder</span>
+<span class="text-blue-400">WORKDIR</span> /app
+<span class="text-blue-400">COPY</span> package*.json ./
+<span class="text-blue-400">RUN</span> npm install --omit=dev
+
+<span class="text-purple-400"># Stage 2: Production</span>
+<span class="text-blue-400">FROM</span> node:22-slim
+<span class="text-blue-400">WORKDIR</span> /app
+<span class="text-blue-400">RUN</span> apt-get update && apt-get install -y chromium \
+  && rm -rf /var/lib/apt/lists/*
+
+<span class="text-blue-400">COPY --from=builder</span> /app/node_modules ./node_modules
+<span class="text-blue-400">COPY</span> . .
+<span class="text-blue-400">EXPOSE</span> 5000
+<span class="text-blue-400">CMD</span> ["node", "server.js"]</code></pre>
+                    <div class="mt-3 text-xs text-green-400">
+                        ✓ Improvements: Multi-stage, slim base, prod-only deps, cleanup
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 bg-blue-900/20 p-6 rounded-2xl border border-blue-500/30">
+                <h4 class="text-blue-400 font-bold text-sm uppercase tracking-wider mb-3">Key Optimization Techniques</h4>
+                <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-400">
+                    <div>
+                        <span class="text-green-500 font-bold">1.</span> <strong>Multi-stage builds:</strong> Separate builder dependencies from runtime
+                    </div>
+                    <div>
+                        <span class="text-green-500 font-bold">2.</span> <strong>Slim base images:</strong> node:22-bookworm (1.1GB) → node:22-slim (200MB)
+                    </div>
+                    <div>
+                        <span class="text-green-500 font-bold">3.</span> <strong>Production-only deps:</strong> <code class="text-purple-400">--omit=dev</code> flag
+                    </div>
+                    <div>
+                        <span class="text-green-500 font-bold">4.</span> <strong>Enhanced .dockerignore:</strong> Exclude tests, configs, dev files
+                    </div>
+                    <div>
+                        <span class="text-green-500 font-bold">5.</span> <strong>Layer optimization:</strong> Combine RUN commands, clean apt cache
+                    </div>
+                    <div>
+                        <span class="text-green-500 font-bold">6.</span> <strong>Python optimization:</strong> opencv-python → opencv-python-headless
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="glass p-12 rounded-[3.5rem] border-t-4 border-purple-500">
-            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tight">Docker Image <span class="text-purple-500">Optimization</span></h2>
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tight">NPTEL <span class="text-purple-500">Results</span></h2>
             <div class="grid md:grid-cols-2 gap-12">
                 <div class="space-y-6">
-                    <h3 class="text-lg font-bold text-blue-400 uppercase tracking-wider">Implementation Strategy</h3>
-                    <ul class="space-y-3 text-slate-400 text-sm">
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-500 font-bold">✓</span>
-                            <span><strong>Multi-Stage Builds:</strong> Separate builder and production stages to eliminate build dependencies</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-500 font-bold">✓</span>
-                            <span><strong>Base Image Swap:</strong> node:22-bookworm → node:22-slim (Python: slim → headless OpenCV)</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-500 font-bold">✓</span>
-                            <span><strong>Dependency Isolation:</strong> Moved dev tools (nodemon, jest) to devDependencies</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-500 font-bold">✓</span>
-                            <span><strong>Build Context Reduction:</strong> Enhanced .dockerignore (tests, configs, dev files)</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="glass p-6 rounded-2xl border border-slate-700">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">Size Reduction Results</h3>
+                    <h3 class="text-lg font-bold text-blue-400 uppercase tracking-wider">Size Reduction Breakdown</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center p-4 bg-red-900/20 rounded-xl border-l-4 border-red-500">
                             <div>
@@ -144,6 +425,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-green-500 font-bold">↓ 82% Reduction</p>
+                                <p class="text-xs text-slate-500">1,642 MB saved</p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center p-4 bg-blue-900/20 rounded-xl border-l-4 border-blue-500">
@@ -153,8 +435,86 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-blue-500 font-bold">↓ 79% Reduction</p>
+                                <p class="text-xs text-slate-500">622 MB saved</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <div class="bg-gradient-to-br from-green-900/30 to-blue-900/30 p-8 rounded-2xl border border-green-500/20">
+                        <h4 class="text-center text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">NPTEL Platform Impact</h4>
+                        <div class="space-y-4">
+                            <div class="text-center">
+                                <p class="text-5xl font-black text-green-400">2.26 GB</p>
+                                <p class="text-sm text-slate-400 mt-2">Total Size Reduced</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-6">
+                                <div class="bg-black/30 p-4 rounded-xl text-center">
+                                    <p class="text-2xl font-black text-blue-400">2</p>
+                                    <p class="text-xs text-slate-500 uppercase">Services Fixed</p>
+                                </div>
+                                <div class="bg-black/30 p-4 rounded-xl text-center">
+                                    <p class="text-2xl font-black text-green-400">✓</p>
+                                    <p class="text-xs text-slate-500 uppercase">Now Deployable</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 bg-yellow-900/20 p-3 rounded-xl border-l-4 border-yellow-500">
+                                <p class="text-xs text-slate-400"><strong class="text-yellow-400">Problem Solved:</strong> NPTEL builds were timing out on the deployment platform due to image size. Optimization enabled successful deployments.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: GitHub Contributions -->
+        <section class="glass p-12 rounded-[3.5rem] border-t-4 border-blue-500">
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tight">Development <span class="text-blue-500">Activity</span></h2>
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-900/20 p-6 rounded-2xl text-center border-b-4 border-blue-500">
+                    <p class="text-4xl font-black text-blue-400 mb-2">31+</p>
+                    <p class="text-sm text-slate-400 uppercase tracking-wider">Total Commits</p>
+                    <p class="text-xs text-slate-600 mt-1">Mar-Apr 2026</p>
+                </div>
+                <div class="bg-purple-900/20 p-6 rounded-2xl text-center border-b-4 border-purple-500">
+                    <p class="text-4xl font-black text-purple-400 mb-2">11</p>
+                    <p class="text-sm text-slate-400 uppercase tracking-wider">Repositories</p>
+                    <p class="text-xs text-slate-600 mt-1">SDC-MUJ Organization</p>
+                </div>
+                <div class="bg-green-900/20 p-6 rounded-2xl text-center border-b-4 border-green-500">
+                    <p class="text-4xl font-black text-green-400 mb-2">17</p>
+                    <p class="text-sm text-slate-400 uppercase tracking-wider">ICAIC Commits</p>
+                    <p class="text-xs text-slate-600 mt-1">Conference Website</p>
+                </div>
+            </div>
+            <div class="bg-slate-900/50 p-6 rounded-2xl">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Recent Contributions (SDC-MUJ)</h3>
+                <div class="space-y-2 text-sm font-mono">
+                    <div class="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-black/50 transition">
+                        <span class="text-blue-400">5 commits</span>
+                        <span class="text-slate-600">→</span>
+                        <span class="text-slate-300">elective-management-system</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-black/50 transition">
+                        <span class="text-purple-400">17 commits</span>
+                        <span class="text-slate-600">→</span>
+                        <span class="text-slate-300">icaic</span>
+                        <span class="text-green-400 text-xs ml-auto">Conference Website</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-black/50 transition">
+                        <span class="text-blue-400">3 commits</span>
+                        <span class="text-slate-600">→</span>
+                        <span class="text-slate-300">it-ticketing-system</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-black/50 transition">
+                        <span class="text-blue-400">2 commits</span>
+                        <span class="text-slate-600">→</span>
+                        <span class="text-slate-300">auth, ICBHST, project-allocation-system</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-black/50 transition">
+                        <span class="text-blue-400">1 commit</span>
+                        <span class="text-slate-600">→</span>
+                        <span class="text-slate-300">mail-service, attendance, mentor-mentee, sdc-website, LMS, icast-2026</span>
                     </div>
                 </div>
             </div>
@@ -239,37 +599,275 @@
         </section>
 
         <section class="space-y-8">
-            <h2 class="text-3xl font-black text-center uppercase tracking-tight">Additional <span class="text-blue-500">Projects</span></h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass p-8 rounded-3xl border-b-4 border-blue-600">
-                    <div class="flex items-center gap-4 mb-4">
-                        <i class="fas fa-graduation-cap text-blue-500 text-3xl"></i>
-                        <div>
-                            <h3 class="font-black text-xl">ICAIC 2026</h3>
-                            <p class="text-xs text-slate-500 uppercase tracking-wider">International Conference Website</p>
+            <h2 class="text-3xl font-black text-center uppercase tracking-tight">Featured <span class="text-blue-500">Projects</span></h2>
+            
+            <!-- ICAIC - Full Width Featured -->
+            <div class="glass p-10 rounded-[3rem] border-l-4 border-blue-600">
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="p-4 bg-blue-500/20 rounded-2xl">
+                                <i class="fas fa-globe text-blue-500 text-4xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-2xl">ICAIC 2026</h3>
+                                <p class="text-sm text-slate-500 uppercase tracking-wider">International Conference on AI & Computing</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 mb-6 leading-relaxed">
+                            Developed a full-stack conference management platform in collaboration with another team member. The website serves as the official portal for an international academic conference hosted by MUJ.
+                        </p>
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-green-500">✓</span>
+                                <span class="text-slate-400"><strong class="text-slate-200">17 commits</strong> contributed to the project</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-green-500">✓</span>
+                                <span class="text-slate-400"><strong class="text-slate-200">Registration system</strong> for conference attendees</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-green-500">✓</span>
+                                <span class="text-slate-400"><strong class="text-slate-200">Paper submission</strong> workflow for researchers</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-green-500">✓</span>
+                                <span class="text-slate-400"><strong class="text-slate-200">Event schedule</strong> and speaker information</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="text-green-500">✓</span>
+                                <span class="text-slate-400"><strong class="text-slate-200">Deployed live</strong> with automated CI/CD pipeline</span>
+                            </div>
+                        </div>
+                        <a href="https://icaic.in" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 rounded-full font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-900/40">
+                            <i class="fas fa-external-link-alt"></i>
+                            Visit icaic.in
+                        </a>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Tech Stack</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-blue-500/20 rounded-full text-xs font-bold text-blue-400">Next.js</span>
+                                <span class="px-3 py-1 bg-green-500/20 rounded-full text-xs font-bold text-green-400">React</span>
+                                <span class="px-3 py-1 bg-purple-500/20 rounded-full text-xs font-bold text-purple-400">Tailwind CSS</span>
+                                <span class="px-3 py-1 bg-orange-500/20 rounded-full text-xs font-bold text-orange-400">TypeScript</span>
+                                <span class="px-3 py-1 bg-cyan-500/20 rounded-full text-xs font-bold text-cyan-400">Docker</span>
+                                <span class="px-3 py-1 bg-pink-500/20 rounded-full text-xs font-bold text-pink-400">GitHub Actions</span>
+                            </div>
+                            <div class="mt-6 pt-6 border-t border-slate-700">
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">My Contributions</h4>
+                                <ul class="space-y-2 text-sm text-slate-400">
+                                    <li>• Frontend development & UI implementation</li>
+                                    <li>• CI/CD pipeline configuration</li>
+                                    <li>• Deployment & infrastructure setup</li>
+                                    <li>• Integration with SDC deployment platform</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <p class="text-sm text-slate-400 mb-4">
-                        Full-stack conference management platform built with modern web technologies. Handled registration, paper submissions, and event logistics.
-                    </p>
-                    <a href="https://icaic.in" target="_blank" class="text-blue-400 text-sm font-bold hover:underline">Visit Live Site →</a>
                 </div>
-                <div class="glass p-8 rounded-3xl border-b-4 border-purple-600">
-                    <div class="flex items-center gap-4 mb-4">
-                        <i class="fas fa-chart-line text-purple-500 text-3xl"></i>
-                        <div>
-                            <h3 class="font-black text-xl">Observability</h3>
-                            <p class="text-xs text-slate-500 uppercase tracking-wider">Real-time Monitoring Dashboard</p>
+            </div>
+
+            <!-- Observability - Smaller Card -->
+            <div class="glass p-8 rounded-3xl border-b-4 border-purple-600">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="flex items-center gap-4 mb-4">
+                            <i class="fas fa-chart-line text-purple-500 text-3xl"></i>
+                            <div>
+                                <h3 class="font-black text-xl">Observability Stack</h3>
+                                <p class="text-xs text-slate-500 uppercase tracking-wider">Real-time Monitoring Dashboard</p>
+                            </div>
                         </div>
+                        <p class="text-sm text-slate-400 mb-4">
+                            Deployed Dozzle for centralized log streaming across all containers. Zero-config, lightweight alternative to heavy logging stacks like ELK. Accessible only via Tailscale mesh network for security.
+                        </p>
                     </div>
-                    <p class="text-sm text-slate-400 mb-4">
-                        Deployed Dozzle for centralized log streaming across all containers. Zero-config, lightweight alternative to heavy logging stacks.
-                    </p>
                     <div class="bg-black/40 rounded-lg overflow-hidden">
                         <img src="/dozzle_screenshot.png" alt="Dozzle Dashboard" class="w-full opacity-80 hover:opacity-100 transition">
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- NEW: Technical Appendix -->
+        <section class="glass p-12 rounded-[3.5rem] border-t-4 border-cyan-500">
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tight">Technical <span class="text-cyan-500">Appendix</span></h2>
+            
+            <details class="mb-6 bg-slate-900/50 p-6 rounded-2xl">
+                <summary class="text-lg font-bold text-blue-400 uppercase tracking-wider cursor-pointer">
+                    📄 NPTEL Backend Dockerfile (358 MB)
+                </summary>
+                <div class="mt-4 bg-black/40 p-4 rounded-xl overflow-x-auto">
+                    <pre class="text-xs"><code class="text-slate-300"><span class="text-purple-400"># --- Stage 1: Dependencies ---</span>
+<span class="text-blue-400">FROM</span> node:22-slim <span class="text-purple-400">AS builder</span>
+
+<span class="text-blue-400">WORKDIR</span> /app
+
+<span class="text-purple-400"># Prevent Puppeteer from downloading Chromium</span>
+<span class="text-blue-400">ENV</span> PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+<span class="text-blue-400">COPY</span> package*.json ./
+<span class="text-purple-400"># Install only production dependencies</span>
+<span class="text-blue-400">RUN</span> npm install --omit=dev
+
+<span class="text-purple-400"># --- Stage 2: Production ---</span>
+<span class="text-blue-400">FROM</span> node:22-slim
+<span class="text-blue-400">WORKDIR</span> /app
+
+<span class="text-purple-400"># Install Chromium and minimum dependencies</span>
+<span class="text-blue-400">RUN</span> apt-get update && apt-get install -y \
+  chromium \
+  fonts-liberation \
+  libappindicator3-1 \
+  libasound2 \
+  libatk-bridge2.0-0 \
+  libatk1.0-0 \
+  libcups2 \
+  libdbus-1-3 \
+  libgdk-pixbuf2.0-0 \
+  libnspr4 \
+  libnss3 \
+  libx11-xcb1 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxrandr2 \
+  xdg-utils \
+  && rm -rf /var/lib/apt/lists/*
+
+<span class="text-blue-400">ENV</span> PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+<span class="text-blue-400">ENV</span> PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+<span class="text-blue-400">ENV</span> NODE_ENV=production
+
+<span class="text-purple-400"># Copy production node_modules from builder</span>
+<span class="text-blue-400">COPY --from=builder</span> /app/node_modules ./node_modules
+
+<span class="text-purple-400"># Copy source code</span>
+<span class="text-blue-400">COPY</span> . .
+
+<span class="text-blue-400">EXPOSE</span> 5000
+<span class="text-blue-400">CMD</span> ["node", "server.js"]</code></pre>
+                </div>
+            </details>
+
+            <details class="mb-6 bg-slate-900/50 p-6 rounded-2xl">
+                <summary class="text-lg font-bold text-purple-400 uppercase tracking-wider cursor-pointer">
+                    🐍 NPTEL Verifier Dockerfile (164 MB)
+                </summary>
+                <div class="mt-4 bg-black/40 p-4 rounded-xl overflow-x-auto">
+                    <pre class="text-xs"><code class="text-slate-300"><span class="text-purple-400"># Stage 1: Builder</span>
+<span class="text-blue-400">FROM</span> python:3.9-slim <span class="text-purple-400">AS builder</span>
+
+<span class="text-blue-400">WORKDIR</span> /app
+
+<span class="text-blue-400">RUN</span> apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+<span class="text-blue-400">COPY</span> requirements.txt .
+<span class="text-blue-400">RUN</span> pip install --user --no-cache-dir -r requirements.txt
+
+<span class="text-purple-400"># Stage 2: Final</span>
+<span class="text-blue-400">FROM</span> python:3.9-slim
+<span class="text-blue-400">WORKDIR</span> /app
+
+<span class="text-blue-400">RUN</span> apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+<span class="text-blue-400">COPY --from=builder</span> /root/.local /root/.local
+<span class="text-blue-400">ENV</span> PATH=/root/.local/bin:$PATH
+
+<span class="text-blue-400">COPY</span> . .
+
+<span class="text-blue-400">EXPOSE</span> 8000
+<span class="text-blue-400">CMD</span> ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+                </div>
+            </details>
+
+            <details class="mb-6 bg-slate-900/50 p-6 rounded-2xl">
+                <summary class="text-lg font-bold text-green-400 uppercase tracking-wider cursor-pointer">
+                    📦 Enhanced .dockerignore Patterns
+                </summary>
+                <div class="mt-4 bg-black/40 p-4 rounded-xl overflow-x-auto">
+                    <pre class="text-xs"><code class="text-slate-300"><span class="text-purple-400"># Dependencies</span>
+node_modules
+npm-debug.log
+
+<span class="text-purple-400"># Version Control</span>
+.git
+.gitignore
+
+<span class="text-purple-400"># Environment</span>
+.env
+.env.*
+
+<span class="text-purple-400"># Testing (NEW)</span>
+tests
+__tests__
+*.test.*
+*.spec.*
+jest.config.js
+vitest.config.js
+setupTests.js
+
+<span class="text-purple-400"># Development Tools (NEW)</span>
+inspect_pdf.js
+logo.txt
+
+<span class="text-purple-400"># Build Artifacts</span>
+dist
+build
+coverage</code></pre>
+                </div>
+            </details>
+
+            <details class="bg-slate-900/50 p-6 rounded-2xl">
+                <summary class="text-lg font-bold text-orange-400 uppercase tracking-wider cursor-pointer">
+                    ⚙️ Infrastructure Specifications
+                </summary>
+                <div class="mt-4 space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-black/40 p-4 rounded-xl">
+                            <h4 class="text-blue-400 font-bold mb-2 uppercase text-xs">Container Orchestration</h4>
+                            <ul class="space-y-1 text-slate-400">
+                                <li>• Docker Compose v2</li>
+                                <li>• Resource limits via cgroups</li>
+                                <li>• Health checks enabled</li>
+                                <li>• Restart policies: unless-stopped</li>
+                            </ul>
+                        </div>
+                        <div class="bg-black/40 p-4 rounded-xl">
+                            <h4 class="text-purple-400 font-bold mb-2 uppercase text-xs">CI/CD Pipeline</h4>
+                            <ul class="space-y-1 text-slate-400">
+                                <li>• GitHub Actions (Ubuntu latest)</li>
+                                <li>• Docker Buildx (multi-platform)</li>
+                                <li>• Private Docker Registry</li>
+                                <li>• SHA-based image tagging</li>
+                            </ul>
+                        </div>
+                        <div class="bg-black/40 p-4 rounded-xl">
+                            <h4 class="text-green-400 font-bold mb-2 uppercase text-xs">Deployment Automation</h4>
+                            <ul class="space-y-1 text-slate-400">
+                                <li>• Ansible 2.14+</li>
+                                <li>• SSH key-based auth</li>
+                                <li>• Idempotent playbooks</li>
+                                <li>• Zero-downtime strategy</li>
+                            </ul>
+                        </div>
+                        <div class="bg-black/40 p-4 rounded-xl">
+                            <h4 class="text-orange-400 font-bold mb-2 uppercase text-xs">Observability</h4>
+                            <ul class="space-y-1 text-slate-400">
+                                <li>• Dozzle (real-time logs)</li>
+                                <li>• Docker healthchecks</li>
+                                <li>• Tailscale mesh network</li>
+                                <li>• Prometheus metrics (planned)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </details>
         </section>
 
         <section id="team" class="text-center pt-10 border-t border-slate-900">
@@ -297,6 +895,26 @@
     </footer>
 
     <script>
+        // Initialize Mermaid - Projector optimized
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#60a5fa',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#93c5fd',
+                secondaryColor: '#a78bfa',
+                tertiaryColor: '#4ade80',
+                background: '#000000',
+                mainBkg: '#1e293b',
+                secondBkg: '#334155',
+                textColor: '#ffffff',
+                fontSize: '16px',
+                fontFamily: 'Plus Jakarta Sans, sans-serif'
+            }
+        });
+
         // TIMER LOGIC
         let sec = 0;
         let timer = null;
@@ -319,7 +937,7 @@
             }, 1000);
         }
 
-        // RESULTS CHART
+        // RESULTS CHART - Projector optimized with brighter colors
         const ctx = document.getElementById('resultsChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
@@ -328,9 +946,11 @@
                 datasets: [{
                     label: 'Image Size (MB)',
                     data: [2000, 358, 786, 164],
-                    backgroundColor: ['#ef4444', '#22c55e', '#ef4444', '#22c55e'],
-                    borderRadius: 15,
-                    barThickness: 60
+                    backgroundColor: ['#f87171', '#4ade80', '#f87171', '#4ade80'],
+                    borderColor: ['#fca5a5', '#86efac', '#fca5a5', '#86efac'],
+                    borderWidth: 2,
+                    borderRadius: 12,
+                    barThickness: 70
                 }]
             },
             options: {
@@ -339,6 +959,8 @@
                 plugins: { 
                     legend: { display: false },
                     tooltip: {
+                        titleFont: { size: 16, weight: 'bold' },
+                        bodyFont: { size: 14 },
                         callbacks: {
                             label: function(context) {
                                 return context.parsed.y + ' MB';
@@ -349,12 +971,18 @@
                 scales: { 
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: '#ffffff05' }, 
-                        ticks: { color: '#475569' }
+                        grid: { color: 'rgba(255,255,255,0.1)' }, 
+                        ticks: { 
+                            color: '#e2e8f0',
+                            font: { size: 14, weight: '600' }
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { color: '#475569', font: { size: 10 } }
+                        ticks: { 
+                            color: '#e2e8f0', 
+                            font: { size: 13, weight: '600' }
+                        }
                     }
                 }
             }
