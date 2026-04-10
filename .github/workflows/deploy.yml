@@ -1,4 +1,4 @@
-name: Deploy Slides
+name: Deploy Static Site
 on:
   push:
     branches: [ main ]
@@ -19,19 +19,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build
+      - name: Stage static site
         run: |
-          npx slidev build --out dist/slides --base /${{ github.event.repository.name }}/slides/
-          cp index.html dist/
-          cp public/* dist/
+          mkdir -p _site/public
+          cp index.html _site/
+          cp index_simple.html _site/
+          cp -r public/. _site/public/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -39,7 +32,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment
