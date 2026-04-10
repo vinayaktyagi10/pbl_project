@@ -4,3 +4,6 @@ dist
 *.pdf
 stats.html
 package-lock.json
+report
+report/images
+report/main.tex

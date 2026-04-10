@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "slidev --open",
     "build:slides": "slidev build --out dist/slides --base /slides/",
-    "build": "rm -rf dist && npm run build:slides && cp index.html dist/ && cp public/* dist/",
+    "build": "rm -rf dist && npm run build:slides && cp index.html dist/ && cp -r public dist/",
     "export": "slidev export"
   },
   "dependencies": {
